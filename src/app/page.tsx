@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { useQueryStore } from "@/store/query-store";
 import { Header } from "@/components/ui/header";
 import { Layers, Play } from "lucide-react";
+import { SchemaPanel } from "@/components/query-builder/schema-panel";
 
 export default function Home() {
   const { currentQuery, initializeQuery, isDarkMode, toggleDarkMode } =
@@ -30,7 +31,7 @@ export default function Home() {
 
       <main className="flex flex-1 flex-col lg:flex-row overflow-hidden">
         {/* Left Panel - Schema Explorer */}
-        <Panel
+        {/* <Panel
           title="Schema Explorer"
           icon={<Layers size={14} />}
           width="w-full lg:w-72"
@@ -41,7 +42,11 @@ export default function Home() {
             title="Connect a Schema"
             description="Load a schema to begin exploring available tables and fields."
           />
-        </Panel>
+        </Panel> */}
+        {/* Left Panel - Schema Explorer */}
+        <div className="w-full lg:w-72 flex-shrink-0 flex flex-col overflow-hidden bg-panel border-r border-border-secondary">
+          <SchemaPanel />
+        </div>
 
         {/* Center Panel - Query Builder */}
         <Panel title={null} width="flex-1" borderSide={null}>
@@ -115,7 +120,7 @@ function EmptyState({
 }) {
   return (
     <div className="flex h-full items-center justify-center p-6">
-      <div className="flex w-full max-w-[240px] flex-col items-center gap-3 rounded-2xl border border-border-secondary bg-elevated px-6 py-8 text-center">
+      <div className="flex w-full max-w-[280px] flex-col items-center gap-3 rounded-2xl border border-border-secondary bg-elevated px-6 py-8 text-center">
         <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-secondary text-muted">
           {icon}
         </div>
