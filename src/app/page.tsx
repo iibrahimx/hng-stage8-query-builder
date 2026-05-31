@@ -9,14 +9,12 @@ export default function Home() {
   const { currentQuery, initializeQuery, isDarkMode, toggleDarkMode } =
     useQueryStore();
 
-  // Initialize a fresh query when the app first loads
   useEffect(() => {
     if (!currentQuery) {
       initializeQuery();
     }
   }, [currentQuery, initializeQuery]);
 
-  // Sync dark mode class with the HTML element
   useEffect(() => {
     const html = document.documentElement;
     if (isDarkMode) {
@@ -27,33 +25,41 @@ export default function Home() {
   }, [isDarkMode]);
 
   return (
-    <div className="flex h-screen flex-col overflow-hidden">
+    <div className="flex h-screen flex-col overflow-hidden bg-app">
       <Header isDarkMode={isDarkMode} onToggleDarkMode={toggleDarkMode} />
 
-      <main className="flex flex-1 overflow-hidden">
-        {/* Left Panel */}
+      <main className="flex flex-1 flex-col lg:flex-row overflow-hidden">
+        {/* Left Panel - Schema Explorer */}
         <Panel
           title="Schema Explorer"
           icon={<Layers size={14} />}
-          width="w-72"
+          width="w-full lg:w-72"
           borderSide="border-r"
         >
-          <PanelPlaceholder>Schema panel (coming next)</PanelPlaceholder>
+          <EmptyState
+            icon={<Layers size={20} />}
+            title="Connect a Schema"
+            description="Load a schema to begin exploring available tables and fields."
+          />
         </Panel>
 
-        {/* Center Panel */}
+        {/* Center Panel - Query Builder */}
         <Panel title={null} width="flex-1" borderSide={null}>
-          <PanelPlaceholder>Query Builder (coming next)</PanelPlaceholder>
+          <CenterEmptyState />
         </Panel>
 
-        {/* Right Panel */}
+        {/* Right Panel - Results */}
         <Panel
           title="Results"
           icon={<Play size={14} />}
-          width="w-96"
+          width="w-full lg:w-96"
           borderSide="border-l"
         >
-          <PanelPlaceholder>Results panel (coming next)</PanelPlaceholder>
+          <EmptyState
+            icon={<Play size={20} />}
+            title="Run a Query"
+            description="Execute your query to preview matching results here."
+          />
         </Panel>
       </main>
     </div>
@@ -79,53 +85,153 @@ function Panel({
 }) {
   return (
     <aside
-      className={`${width} flex-shrink-0 flex flex-col overflow-hidden ${borderSide || ""}`}
-      style={{
-        backgroundColor: "var(--color-bg-card)",
-        borderColor: "var(--color-border-light)",
-      }}
+      className={`${width} flex flex-col overflow-hidden bg-panel ${borderSide || ""} ${borderSide ? "border-border-secondary" : ""}`}
     >
-      {/* Panel Header */}
       {title && (
-        <div
-          className="flex items-center gap-2 border-b px-4 py-3"
-          style={{ borderColor: "var(--color-border-light)" }}
-        >
-          <span style={{ color: "var(--color-text-muted)" }}>{icon}</span>
-          <h2
-            className="text-xs font-semibold uppercase tracking-wider"
-            style={{
-              fontFamily: "var(--font-condensed)",
-              color: "var(--color-text-secondary)",
-            }}
-          >
+        <div className="flex items-center gap-2 border-b border-border-secondary px-4 py-2.5 flex-shrink-0">
+          <span className="text-muted">{icon}</span>
+          <h2 className="text-xs font-semibold uppercase tracking-wider text-secondary-text">
             {title}
           </h2>
         </div>
       )}
-
-      {/* Panel Content */}
       <div className="flex-1 overflow-y-auto">{children}</div>
     </aside>
   );
 }
 
 // ============================================================
-// PLACEHOLDER (temporary)
+// EMPTY STATE (Schema & Results panels)
 // ============================================================
 
-function PanelPlaceholder({ children }: { children: React.ReactNode }) {
+function EmptyState({
+  icon,
+  title,
+  description,
+}: {
+  icon: React.ReactNode;
+  title: string;
+  description: string;
+}) {
   return (
     <div className="flex h-full items-center justify-center p-6">
-      <p
-        className="text-xs"
-        style={{
-          fontFamily: "var(--font-condensed)",
-          color: "var(--color-text-muted)",
-        }}
-      >
-        {children}
-      </p>
+      <div className="flex w-full max-w-[240px] flex-col items-center gap-3 rounded-2xl border border-border-secondary bg-elevated px-6 py-8 text-center">
+        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-secondary text-muted">
+          {icon}
+        </div>
+        <div>
+          <p className="text-[13px] font-medium text-primary">{title}</p>
+          <p className="mt-1 text-[12px] leading-relaxed text-muted">
+            {description}
+          </p>
+        </div>
+      </div>
     </div>
+  );
+}
+
+// ============================================================
+// CENTER EMPTY STATE - Focal point with container
+// ============================================================
+
+function CenterEmptyState() {
+  return (
+    <div className="flex h-full items-center justify-center bg-secondary p-8">
+      <div className="flex w-full max-w-[540px] flex-col items-center gap-4 rounded-[20px] border border-border-secondary bg-elevated px-8 py-8 text-center">
+        {/* Icon */}
+        <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-accent-border bg-accent-surface">
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M4 6h16M4 12h10M4 18h6"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              className="text-accent"
+            />
+            <circle
+              cx="18"
+              cy="18"
+              r="3"
+              stroke="currentColor"
+              strokeWidth="2"
+              className="text-accent"
+            />
+            <path
+              d="M18 16v4M16 18h4"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              className="text-accent"
+            />
+          </svg>
+        </div>
+
+        {/* Text */}
+        <div>
+          <h2 className="text-[15px] font-semibold text-primary">
+            Start Building a Query
+          </h2>
+          <p className="mt-1.5 text-[13px] leading-relaxed text-muted">
+            Select a table from the schema explorer and add conditions to build
+            your query visually.
+          </p>
+        </div>
+
+        {/* Flow Preview */}
+        <div className="flex flex-wrap items-center justify-center gap-2 text-[11px] font-medium text-muted">
+          <FlowStep>Table</FlowStep>
+          <FlowChevron />
+          <FlowStep>Fields</FlowStep>
+          <FlowChevron />
+          <FlowStep>Filters</FlowStep>
+          <FlowChevron />
+          <FlowStep>Sort</FlowStep>
+          <FlowChevron />
+          <FlowStep accent>Results</FlowStep>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FlowStep({
+  children,
+  accent,
+}: {
+  children: React.ReactNode;
+  accent?: boolean;
+}) {
+  return (
+    <span
+      className={`rounded-md px-2 py-1 ${
+        accent
+          ? "bg-accent-surface text-accent border border-accent-border"
+          : "bg-secondary text-muted"
+      }`}
+    >
+      {children}
+    </span>
+  );
+}
+
+function FlowChevron() {
+  return (
+    <svg
+      width="12"
+      height="12"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      opacity="0.4"
+    >
+      <path d="M9 18l6-6-6-6" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
   );
 }
