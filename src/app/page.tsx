@@ -31,19 +31,6 @@ export default function Home() {
 
       <main className="flex flex-1 flex-col lg:flex-row overflow-hidden">
         {/* Left Panel - Schema Explorer */}
-        {/* <Panel
-          title="Schema Explorer"
-          icon={<Layers size={14} />}
-          width="w-full lg:w-72"
-          borderSide="border-r"
-        >
-          <EmptyState
-            icon={<Layers size={20} />}
-            title="Connect a Schema"
-            description="Load a schema to begin exploring available tables and fields."
-          />
-        </Panel> */}
-        {/* Left Panel - Schema Explorer */}
         <div className="w-full lg:w-72 flex-shrink-0 flex flex-col overflow-hidden bg-panel border-r border-border-secondary">
           <SchemaPanel />
         </div>
@@ -63,7 +50,14 @@ export default function Home() {
           <EmptyState
             icon={<Play size={20} />}
             title="Run a Query"
-            description="Execute your query to preview matching results here."
+            description="Build a query and execute it to see matching results here."
+            action={{
+              label: "Execute Query",
+              onClick: () => {
+                const store = useQueryStore.getState();
+                store.executeCurrentQuery();
+              },
+            }}
           />
         </Panel>
       </main>
@@ -106,21 +100,26 @@ function Panel({
 }
 
 // ============================================================
-// EMPTY STATE (Schema & Results panels)
+// EMPTY STATE
 // ============================================================
 
 function EmptyState({
   icon,
   title,
   description,
+  action,
 }: {
   icon: React.ReactNode;
   title: string;
   description: string;
+  action?: {
+    label: string;
+    onClick: () => void;
+  };
 }) {
   return (
     <div className="flex h-full items-center justify-center p-6">
-      <div className="flex w-full max-w-[280px] flex-col items-center gap-3 rounded-2xl border border-border-secondary bg-elevated px-6 py-8 text-center">
+      <div className="flex w-full max-w-[240px] flex-col items-center gap-4 rounded-2xl border border-border-secondary bg-elevated px-6 py-8 text-center">
         <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-secondary text-muted">
           {icon}
         </div>
@@ -130,20 +129,27 @@ function EmptyState({
             {description}
           </p>
         </div>
+        {action && (
+          <button
+            onClick={action.onClick}
+            className="cursor-pointer rounded-lg bg-accent px-4 py-2 text-[12px] font-semibold text-accent-foreground transition-all duration-150 hover:bg-accent-hover active:scale-[0.98]"
+          >
+            {action.label}
+          </button>
+        )}
       </div>
     </div>
   );
 }
 
 // ============================================================
-// CENTER EMPTY STATE - Focal point with container
+// CENTER EMPTY STATE
 // ============================================================
 
 function CenterEmptyState() {
   return (
     <div className="flex h-full items-center justify-center bg-secondary p-8">
       <div className="flex w-full max-w-[540px] flex-col items-center gap-4 rounded-[20px] border border-border-secondary bg-elevated px-8 py-8 text-center">
-        {/* Icon */}
         <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-accent-border bg-accent-surface">
           <svg
             width="24"
@@ -176,8 +182,6 @@ function CenterEmptyState() {
             />
           </svg>
         </div>
-
-        {/* Text */}
         <div>
           <h2 className="text-[15px] font-semibold text-primary">
             Start Building a Query
@@ -187,8 +191,6 @@ function CenterEmptyState() {
             your query visually.
           </p>
         </div>
-
-        {/* Flow Preview */}
         <div className="flex flex-wrap items-center justify-center gap-2 text-[11px] font-medium text-muted">
           <FlowStep>Table</FlowStep>
           <FlowChevron />
