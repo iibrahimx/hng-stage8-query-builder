@@ -1,6 +1,6 @@
 "use client";
 
-import { Sun, Moon, Database, History, Download, Upload } from "lucide-react";
+import { Moon, Sun, Database, History, Download, Upload } from "lucide-react";
 
 interface HeaderProps {
   isDarkMode: boolean;
@@ -9,81 +9,39 @@ interface HeaderProps {
 
 export function Header({ isDarkMode, onToggleDarkMode }: HeaderProps) {
   return (
-    <header
-      className="flex h-14 items-center justify-between border-b px-6 flex-shrink-0 z-10"
-      style={{
-        backgroundColor: "var(--color-bg-card)",
-        borderColor: "var(--color-border-light)",
-      }}
-    >
-      {/* ========== LEFT: Logo & Title ========== */}
-      <div className="flex items-center gap-3">
-        {/* Professional Logo Mark */}
+    <header className="flex h-auto min-h-11 flex-wrap items-center justify-between gap-2 border-b border-border-default px-3 md:px-4 py-2 flex-shrink-0 select-none bg-panel">
+      {/* LEFT: Logo + Title */}
+      <div className="flex items-center gap-2.5">
         <LogoMark />
-
-        {/* Title */}
-        <div className="flex flex-col">
-          <h1
-            className="text-sm font-semibold tracking-tight leading-none"
-            style={{
-              fontFamily: "var(--font-sans)",
-              color: "var(--color-text-primary)",
-            }}
-          >
-            Query Builder
-          </h1>
-          <span
-            className="text-[10px] font-medium tracking-wider uppercase leading-none mt-0.5"
-            style={{
-              fontFamily: "var(--font-condensed)",
-              color: "var(--color-text-muted)",
-            }}
-          >
-            Visual Explorer
-          </span>
-        </div>
+        <span className="text-[13px] font-semibold tracking-tight text-primary">
+          Query Builder
+        </span>
       </div>
 
-      {/* ========== CENTER: Quick Actions ========== */}
-      <div className="flex items-center gap-1">
-        <QuickActionButton
-          icon={<Database size={16} />}
+      {/* CENTER: Navigation Toolbar */}
+      <nav className="flex items-center gap-0.5 rounded-lg p-0.5 bg-secondary overflow-x-auto max-w-full scrollbar-none">
+        <NavButton
+          icon={<Database size={13} />}
           label="Schema"
-          data-testid="schema-btn"
+          shortcut="1"
+          active
         />
-        <QuickActionButton
-          icon={<History size={16} />}
-          label="History"
-          data-testid="history-btn"
-        />
-        <QuickActionButton
-          icon={<Download size={16} />}
-          label="Export"
-          data-testid="export-btn"
-        />
-        <QuickActionButton
-          icon={<Upload size={16} />}
-          label="Import"
-          data-testid="import-btn"
-        />
-      </div>
+        <NavButton icon={<History size={13} />} label="History" shortcut="2" />
+        <NavButton icon={<Download size={13} />} label="Export" shortcut="3" />
+        <NavButton icon={<Upload size={13} />} label="Import" shortcut="4" />
+      </nav>
 
-      {/* ========== RIGHT: Theme Toggle ========== */}
-      <div className="flex items-center gap-3">
-        {/* Theme Toggle */}
+      {/* RIGHT: Theme Toggle */}
+      <div className="flex items-center gap-2">
         <button
           onClick={onToggleDarkMode}
-          className="relative rounded-lg p-2 transition-all duration-200 hover:bg-opacity-10 cursor-pointer"
-          style={{
-            color: "var(--color-text-secondary)",
-            backgroundColor: "var(--color-surface-100)",
-          }}
+          className="cursor-pointer flex h-7 w-7 items-center justify-center rounded-md bg-secondary text-secondary-text transition-all duration-150 hover:brightness-95"
           aria-label={
             isDarkMode ? "Switch to light mode" : "Switch to dark mode"
           }
           data-testid="theme-toggle"
         >
-          {isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
+          {isDarkMode ? <Sun size={14} /> : <Moon size={14} />}
         </button>
       </div>
     </header>
@@ -96,58 +54,33 @@ export function Header({ isDarkMode, onToggleDarkMode }: HeaderProps) {
 
 function LogoMark() {
   return (
-    <div className="relative flex h-9 w-9 items-center justify-center">
-      {/* Glow ring - pulses outward */}
-      <div
-        className="absolute inset-0 rounded-lg animate-pulse"
-        style={{
-          background:
-            "radial-gradient(circle, var(--color-primary-400) 0%, transparent 70%)",
-          opacity: 0.3,
-          filter: "blur(4px)",
-        }}
-      />
-
-      {/* Main logo background */}
-      <div
-        className="relative flex h-9 w-9 items-center justify-center rounded-lg z-10"
-        style={{
-          background:
-            "linear-gradient(135deg, var(--color-primary-700) 0%, var(--color-primary-500) 100%)",
-          boxShadow:
-            "0 0 12px rgba(21, 128, 61, 0.4), inset 0 1px 0 rgba(255,255,255,0.1)",
-        }}
-      >
-        {/* Accent corner highlight */}
-        <div
-          className="absolute top-0.5 right-0.5 h-1.5 w-1.5 rounded-full"
-          style={{ backgroundColor: "var(--color-accent-400)" }}
-        />
-
-        {/* Logo symbol */}
+    <div className="relative flex h-7 w-7 items-center justify-center">
+      {/* Subtle premium glow */}
+      <div className="absolute inset-0 rounded-md bg-[radial-gradient(circle,rgba(22,163,74,0.25)_0%,transparent_70%)] blur-[3px]" />
+      {/* Main logo */}
+      <div className="relative flex h-7 w-7 items-center justify-center rounded-md bg-accent shadow-[0_0_10px_rgba(22,163,74,0.3)]">
         <svg
-          width="18"
-          height="18"
+          width="14"
+          height="14"
           viewBox="0 0 24 24"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
         >
           <circle cx="12" cy="12" r="3" fill="white" />
           <path
-            d="M12 9V4M12 20v-5M9 12H4M20 12h-5M7.05 7.05L3.5 3.5M20.5 20.5l-3.55-3.55M16.95 7.05l3.55-3.55M3.5 20.5l3.55-3.55"
+            d="M12 9V4M12 20v-5"
             stroke="white"
             strokeWidth="1.5"
             strokeLinecap="round"
             opacity="0.7"
           />
-          <circle cx="12" cy="3" r="1.2" fill="var(--color-accent-300)" />
-          <circle cx="12" cy="21" r="1.2" fill="var(--color-accent-300)" />
-          <circle cx="3" cy="12" r="1.2" fill="var(--color-accent-300)" />
-          <circle cx="21" cy="12" r="1.2" fill="var(--color-accent-300)" />
-          <circle cx="4.5" cy="4.5" r="1" fill="var(--color-accent-300)" />
-          <circle cx="19.5" cy="19.5" r="1" fill="var(--color-accent-300)" />
-          <circle cx="19.5" cy="4.5" r="1" fill="var(--color-accent-300)" />
-          <circle cx="4.5" cy="19.5" r="1" fill="var(--color-accent-300)" />
+          <path
+            d="M9 12H4M20 12h-5"
+            stroke="white"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            opacity="0.7"
+          />
         </svg>
       </div>
     </div>
@@ -155,31 +88,37 @@ function LogoMark() {
 }
 
 // ============================================================
-// QUICK ACTION BUTTON
+// NAVIGATION BUTTON
 // ============================================================
 
-function QuickActionButton({
+function NavButton({
   icon,
   label,
-  ...props
+  shortcut,
+  active = false,
 }: {
   icon: React.ReactNode;
   label: string;
-  [key: string]: unknown;
+  shortcut: string;
+  active?: boolean;
 }) {
   return (
     <button
-      className="flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium transition-all 
-        duration-150 hover:brightness-95 cursor-pointer"
-      style={{
-        fontFamily: "var(--font-condensed)",
-        color: "var(--color-text-secondary)",
-        backgroundColor: "transparent",
-      }}
-      {...props}
+      className={`cursor-pointer flex items-center gap-1.5 rounded-md px-2.5 py-1 text-[12px] font-medium transition-all duration-150 ${
+        active
+          ? "bg-accent-surface border border-accent-border text-accent shadow-none"
+          : "text-secondary-text hover:bg-hover"
+      }`}
     >
       {icon}
-      <span className="hidden sm:inline">{label}</span>
+      {label}
+      <kbd
+        className={`hidden md:inline-flex text-[10px] font-medium px-1 rounded font-mono ${
+          active ? "text-accent/70" : "text-muted"
+        }`}
+      >
+        ⌘{shortcut}
+      </kbd>
     </button>
   );
 }
