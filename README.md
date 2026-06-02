@@ -457,6 +457,14 @@ The query engine remains compatible with real API data sources.
 
 ---
 
+## 6. Schema Switching Resets Query
+
+**Decision:** Switching schemas clears the current query.
+
+**Reason:** Each schema has different fields and types. Preserving a query built for one schema when switching to another would result in invalid field references. A fresh start per schema is safer and clearer for users.
+
+---
+
 # Features
 
 - Visual query builder
@@ -482,6 +490,24 @@ The query engine remains compatible with real API data sources.
 
 ---
 
+---
+
+## Multi-Schema Support
+
+The application supports 5 distinct schemas, switchable via a dropdown in the Schema Explorer panel:
+
+| Schema   | Fields | Records | Key Field Types                              |
+| -------- | ------ | ------- | -------------------------------------------- |
+| users    | 9      | 15      | string, number, enum (country, status), date |
+| products | 8      | 12      | string, number, enum (category), boolean     |
+| orders   | 7      | 8       | string, number, enum (status), date, boolean |
+| workers  | 7      | 8       | string, number, enum (department), date      |
+| cities   | 6      | 10      | string, number, enum (continent), boolean    |
+
+Switching schemas resets the current query and loads the appropriate dataset. All queries, history, and presets are schema-specific.
+
+---
+
 # Testing
 
 The application includes tests covering:
@@ -503,16 +529,17 @@ Testing tools include:
 
 # Tech Stack
 
-| Technology              | Purpose          |
-| ----------------------- | ---------------- |
-| Next.js 16 (App Router) | Framework        |
-| TypeScript              | Type Safety      |
-| Tailwind CSS v4         | Styling          |
-| Zustand                 | State Management |
-| DnD Kit                 | Drag-and-Drop    |
-| React Resizable Panels  | Resizable Layout |
-| Lucide React            | Icons            |
-| Geist & IBM Plex        | Typography       |
+| Technology               | Purpose                      |
+| ------------------------ | ---------------------------- |
+| Next.js 16 (App Router)  | Framework                    |
+| TypeScript               | Type Safety                  |
+| Tailwind CSS v4          | Styling & Theme System       |
+| Zustand                  | State Management             |
+| @dnd-kit/core & sortable | Drag-and-Drop Reordering     |
+| react-resizable-panels   | Resizable Three-Panel Layout |
+| Lucide React             | Icons                        |
+| Geist & IBM Plex         | Typography                   |
+| Vitest                   | Unit Testing                 |
 
 ---
 
@@ -551,13 +578,29 @@ src/
 │
 ├── components/
 │   ├── ui/
+|   │   └── Header.tsx
 │   └── query-builder/
+|       ├── HistoryPanel.tsx
+│       ├── QueryWorkspace.ts
+│       ├── ResultsPanel.ts
+│       └── SchemaPanel.tsx
 │
 ├── data/
+│   ├── index.ts
+│   ├── cities-schema.ts
+│   ├── cities-dataset.ts
+│   ├── orders-schema.ts
+│   ├── orders-dataset.ts
+│   ├── products-schema.ts
+│   ├── products-dataset.ts
+│   ├── workers-schema.ts
+│   ├── workers-dataset.ts
 │   ├── users-schema.ts
 │   └── users-dataset.ts
 │
 ├── lib/
+│   ├── __tests__/query-engine.test.ts
+│   ├── index.ts
 │   ├── query-engine.ts
 │   ├── operators.ts
 │   ├── storage.ts
@@ -570,5 +613,3 @@ src/
     ├── index.ts
     └── query.ts
 ```
-
----
