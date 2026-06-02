@@ -43,6 +43,8 @@ interface QueryState {
   // --- Theme ---
   isDarkMode: boolean;
 
+  hydrated: boolean;
+
   // --- Actions ---
   initializeQuery: () => void;
   addCondition: (parentGroupId: string) => void;
@@ -63,6 +65,7 @@ interface QueryState {
   toggleDarkMode: () => void;
   clearResults: () => void;
   loadSchema: () => void;
+  hydrateFromStorage: () => void;
 }
 
 // ============================================================
@@ -168,14 +171,15 @@ export const useQueryStore = create<QueryState>((set, get) => ({
   schema: usersSchema.fields,
   dataset: [],
   results: null,
-  schemaLoaded: getStoredBoolean(STORAGE_KEYS.SCHEMA_LOADED, false),
+  schemaLoaded: false,
   queryPreview: "",
   validationErrors: [],
   isExecuting: false,
   resultCount: 0,
   queryHistory: [],
   savedPresets: [],
-  isDarkMode: getStoredBoolean(STORAGE_KEYS.THEME, false),
+  isDarkMode: false,
+  hydrated: false,
 
   // --- ACTION: Initialize a fresh query ---
   initializeQuery: () => {
@@ -481,5 +485,18 @@ export const useQueryStore = create<QueryState>((set, get) => ({
   loadSchema: () => {
     setStoredBoolean(STORAGE_KEYS.SCHEMA_LOADED, true);
     set({ schemaLoaded: true });
+  },
+
+  hydrateFromStorage: () => {
+    if (typeof window === "undefined") return;
+    const savedTheme = getStoredBoolean(STORAGE_KEYS.THEME, false);
+    const savedSchema = getStoredBoolean(STORAGE_KEYS.SCHEMA_LOADED, false);
+
+    // Use requestAnimationFrame to batch these updates after first paint
+    set({
+      isDarkMode: savedTheme,
+      schemaLoaded: savedSchema,
+      hydrated: true,
+    });
   },
 }));

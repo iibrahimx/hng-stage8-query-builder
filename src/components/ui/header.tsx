@@ -10,10 +10,10 @@ interface HeaderProps {
 export function Header({ isDarkMode, onToggleDarkMode }: HeaderProps) {
   return (
     <header className="flex h-auto min-h-11 flex-wrap items-center justify-between gap-2 border-b border-border-default px-3 md:px-4 py-2 flex-shrink-0 select-none bg-panel">
-      {/* LEFT: Logo + Title */}
+      {/* LEFT: Logo & Title */}
       <div className="flex items-center gap-2.5">
         <LogoMark />
-        <span className="text-[13px] font-semibold tracking-widest text-primary uppercase">
+        <span className="text-[13px] font-semibold tracking-tight text-primary">
           Query Builder
         </span>
       </div>
@@ -31,17 +31,28 @@ export function Header({ isDarkMode, onToggleDarkMode }: HeaderProps) {
         <NavButton icon={<Upload size={13} />} label="Import" shortcut="4" />
       </nav>
 
-      {/* RIGHT: Theme Toggle */}
+      {/* RIGHT: Theme Toggle - renders both icons, shows one via CSS */}
       <div className="flex items-center gap-2">
         <button
           onClick={onToggleDarkMode}
-          className="cursor-pointer flex h-7 w-7 items-center justify-center rounded-md bg-secondary text-secondary-text transition-all duration-150 hover:brightness-95"
-          aria-label={
-            isDarkMode ? "Switch to light mode" : "Switch to dark mode"
-          }
+          className="cursor-pointer relative flex h-7 w-7 items-center justify-center rounded-md bg-secondary transition-all duration-150 hover:brightness-95"
+          aria-label="Toggle theme"
           data-testid="theme-toggle"
         >
-          {isDarkMode ? <Sun size={14} /> : <Moon size={14} />}
+          {/* Sun - visible in dark mode (when user wants to switch to light) */}
+          <Sun
+            size={14}
+            className={`absolute text-secondary-text transition-opacity duration-150 ${
+              isDarkMode ? "opacity-100" : "opacity-0"
+            }`}
+          />
+          {/* Moon - visible in light mode (when user wants to switch to dark) */}
+          <Moon
+            size={14}
+            className={`absolute text-secondary-text transition-opacity duration-150 ${
+              isDarkMode ? "opacity-0" : "opacity-100"
+            }`}
+          />
         </button>
       </div>
     </header>
@@ -55,10 +66,8 @@ export function Header({ isDarkMode, onToggleDarkMode }: HeaderProps) {
 function LogoMark() {
   return (
     <div className="relative flex h-7 w-7 items-center justify-center">
-      {/* Subtle premium glow */}
       <div className="absolute inset-0 rounded-md bg-[radial-gradient(circle,rgba(22,163,74,0.25)_0%,transparent_70%)] blur-[3px]" />
-      {/* Main logo */}
-      <div className="relative flex h-7 w-7 items-center justify-center rounded-md bg-accent shadow-[0_0_6px_rgba(22,163,74,0.18)]">
+      <div className="relative flex h-7 w-7 items-center justify-center rounded-md bg-accent shadow-[0_0_10px_rgba(22,163,74,0.3)]">
         <svg
           width="14"
           height="14"
