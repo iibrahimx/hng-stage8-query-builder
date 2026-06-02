@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { useQueryStore } from "@/store/query-store";
 import { Header } from "@/components/ui/header";
-import { Layers, Play } from "lucide-react";
+import { Play } from "lucide-react";
 import { SchemaPanel } from "@/components/query-builder/schema-panel";
 
 export default function Home() {
