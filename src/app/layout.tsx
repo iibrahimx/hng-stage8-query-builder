@@ -22,26 +22,20 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        {/* 
-          This script runs BEFORE React renders.
-          It checks localStorage and applies the dark class immediately,
-          preventing a "flash of wrong theme" on page load.
-        */}
         <script
           dangerouslySetInnerHTML={{
             __html: `
-              (function() {
-                try {
-                  var theme = localStorage.getItem("query-builder-theme");
-                  if (theme === "true") {
-                    document.documentElement.classList.add("dark");
-                  }
-                } catch(e) {}
-              })();
-            `,
+          try {
+            const dark = localStorage.getItem('query-builder-theme');
+            if (dark === 'true') {
+              document.documentElement.classList.add('dark');
+            }
+          } catch {}
+        `,
           }}
         />
       </head>
+
       <body className="min-h-screen antialiased">{children}</body>
     </html>
   );

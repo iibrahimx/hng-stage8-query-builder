@@ -10,6 +10,14 @@ export default function Home() {
   const { currentQuery, initializeQuery, isDarkMode, toggleDarkMode } =
     useQueryStore();
 
+  const hydrated = useQueryStore((state) => state.hydrated);
+
+  const hydrateFromStorage = useQueryStore((state) => state.hydrateFromStorage);
+
+  useEffect(() => {
+    hydrateFromStorage();
+  }, [hydrateFromStorage]);
+
   useEffect(() => {
     if (!currentQuery) {
       initializeQuery();
@@ -24,6 +32,10 @@ export default function Home() {
       html.classList.remove("dark");
     }
   }, [isDarkMode]);
+
+  if (!hydrated) {
+    return <div className="h-screen bg-app" />;
+  }
 
   return (
     <div className="flex h-screen flex-col overflow-hidden bg-app">
