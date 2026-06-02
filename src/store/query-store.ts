@@ -10,8 +10,7 @@ import {
 } from "@/types";
 import { generateId, deepClone } from "@/lib/utils";
 import { executeQuery, generateQueryPreview } from "@/lib/query-engine";
-import { usersSchema } from "@/data";
-import { UserRecord } from "@/data";
+import { usersSchema, usersDataset, UserRecord } from "@/data";
 import {
   STORAGE_KEYS,
   getStoredBoolean,
@@ -169,7 +168,7 @@ export const useQueryStore = create<QueryState>((set, get) => ({
   // --- Initial State ---
   currentQuery: null,
   schema: usersSchema.fields,
-  dataset: [],
+  dataset: usersDataset as unknown as UserRecord[],
   results: null,
   schemaLoaded: false,
   queryPreview: "",
