@@ -2,6 +2,7 @@
 
 import { Moon, Sun, Database, History, Download, Upload } from "lucide-react";
 import { useQueryStore } from "@/store/query-store";
+import { useCallback, useEffect } from "react";
 
 interface HeaderProps {
   isDarkMode: boolean;
@@ -14,32 +15,15 @@ export function Header({ isDarkMode, onToggleDarkMode }: HeaderProps) {
 
   const results = useQueryStore((state) => state.results);
 
-  const handleExport = () => {
-    // If there are results, export as CSV
-    if (results && results.length > 0) {
-      const headers = Object.keys(results[0]).join(",");
-      const rows = results.map((row) =>
-        Object.values(row)
-          .map((val) => {
-            const str = String(val ?? "");
-            // Escape quotes and wrap in quotes if contains comma
-            return str.includes(",") || str.includes('"')
-              ? `"${str.replace(/"/g, '""')}"`
-              : str;
-          })
-          .join(","),
-      );
-      const csv = [headers, ...rows].join("\n");
-      downloadFile(csv, "query-results.csv", "text/csv");
-      return;
-    }
+  const historyMode = useQueryStore((state) => state.historyMode);
+  const setHistoryMode = useQueryStore((state) => state.setHistoryMode);
 
-    // Otherwise export the query JSON
-    const query = useQueryStore.getState().currentQuery;
-    if (query) {
-      const json = JSON.stringify(query, null, 2);
-      downloadFile(json, "query-export.json", "application/json");
-    }
+  const handleSchemaClick = () => {
+    setHistoryMode(false);
+  };
+
+  const handleHistoryClick = () => {
+    setHistoryMode(true);
   };
 
   function downloadFile(content: string, filename: string, mimeType: string) {
@@ -54,8 +38,31 @@ export function Header({ isDarkMode, onToggleDarkMode }: HeaderProps) {
     URL.revokeObjectURL(url);
   }
 
-  // Function to handle import
-  const handleImport = () => {
+  const handleExport = useCallback(() => {
+    if (results && results.length > 0) {
+      const headers = Object.keys(results[0]).join(",");
+      const rows = results.map((row) =>
+        Object.values(row)
+          .map((val) => {
+            const str = String(val ?? "");
+            return str.includes(",") || str.includes('"')
+              ? `"${str.replace(/"/g, '""')}"`
+              : str;
+          })
+          .join(","),
+      );
+      const csv = [headers, ...rows].join("\n");
+      downloadFile(csv, "query-results.csv", "text/csv");
+      return;
+    }
+    const query = useQueryStore.getState().currentQuery;
+    if (query) {
+      const json = JSON.stringify(query, null, 2);
+      downloadFile(json, "query-export.json", "application/json");
+    }
+  }, [results]);
+
+  const handleImport = useCallback(() => {
     const input = document.createElement("input");
     input.type = "file";
     input.accept = ".json";
@@ -73,7 +80,41 @@ export function Header({ isDarkMode, onToggleDarkMode }: HeaderProps) {
       reader.readAsText(file);
     };
     input.click();
-  };
+  }, [importQuery]);
+
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Ctrl/Cmd + K - toggle history/schema
+      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+        e.preventDefault();
+        setHistoryMode(!historyMode);
+      }
+      // Ctrl/Cmd + 1 - Schema
+      if ((e.metaKey || e.ctrlKey) && e.key === "1") {
+        e.preventDefault();
+        setHistoryMode(false);
+      }
+      // Ctrl/Cmd + 2 - History
+      if ((e.metaKey || e.ctrlKey) && e.key === "2") {
+        e.preventDefault();
+        setHistoryMode(true);
+      }
+      // Ctrl/Cmd + E - Export
+      if ((e.metaKey || e.ctrlKey) && e.key === "e") {
+        e.preventDefault();
+        handleExport();
+      }
+      // Ctrl/Cmd + I - Import
+      if ((e.metaKey || e.ctrlKey) && e.key === "i") {
+        e.preventDefault();
+        handleImport();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [historyMode, results, handleExport, handleImport, setHistoryMode]);
 
   return (
     <header className="flex h-auto min-h-11 flex-wrap items-center justify-between gap-2 border-b border-border-default px-3 md:px-4 py-2 flex-shrink-0 select-none bg-panel">
@@ -91,19 +132,26 @@ export function Header({ isDarkMode, onToggleDarkMode }: HeaderProps) {
           icon={<Database size={13} />}
           label="Schema"
           shortcut="1"
-          active
+          active={!historyMode}
+          onClick={handleSchemaClick}
         />
-        <NavButton icon={<History size={13} />} label="History" shortcut="2" />
         <NavButton
-          icon={<Download size={13} />}
-          label="Export"
-          shortcut="3"
-          onClick={handleExport}
+          icon={<History size={13} />}
+          label="History"
+          shortcut="2"
+          active={historyMode}
+          onClick={handleHistoryClick}
         />
         <NavButton
           icon={<Upload size={13} />}
+          label="Export"
+          shortcut="e"
+          onClick={handleExport}
+        />
+        <NavButton
+          icon={<Download size={13} />}
           label="Import"
-          shortcut="4"
+          shortcut="i"
           onClick={handleImport}
         />
       </nav>

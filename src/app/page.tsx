@@ -8,6 +8,7 @@ import { Header } from "@/components/ui/header";
 import { SchemaPanel } from "@/components/query-builder/schema-panel";
 import { QueryWorkspace } from "@/components/query-builder/query-workspace";
 import { ResultsPanel } from "@/components/query-builder/results-panel";
+import { HistoryPanel } from "@/components/query-builder/history-panel";
 
 export default function Home() {
   const { currentQuery, initializeQuery, isDarkMode, toggleDarkMode } =
@@ -16,6 +17,8 @@ export default function Home() {
   const hydrated = useQueryStore((state) => state.hydrated);
 
   const hydrateFromStorage = useQueryStore((state) => state.hydrateFromStorage);
+
+  const historyMode = useQueryStore((state) => state.historyMode);
 
   useEffect(() => {
     hydrateFromStorage();
@@ -62,7 +65,7 @@ export default function Home() {
         </Panel> */}
         <Panel defaultSize={40} minSize={35}>
           <div className="flex-1 flex flex-col overflow-hidden">
-            <QueryWorkspace />
+            {historyMode ? <HistoryPanel /> : <QueryWorkspace />}
           </div>
         </Panel>
 
