@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useQueryStore } from "@/store/query-store";
-import { Plus, Trash2, ChevronRight, GripVertical } from "lucide-react";
+import { Plus, Trash2, ChevronRight, GripVertical, Save } from "lucide-react";
 import { Operator } from "@/types";
 import { operatorLabels, operatorsByFieldType } from "@/lib/operators";
 import {
@@ -24,6 +24,9 @@ export function QueryWorkspace() {
   const currentQuery = useQueryStore((state) => state.currentQuery);
   const schemaLoaded = useQueryStore((state) => state.schemaLoaded);
   const queryPreview = useQueryStore((state) => state.queryPreview);
+  const savePreset = useQueryStore((state) => state.savePreset);
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveName, setSaveName] = useState("");
 
   if (!schemaLoaded) {
     return (
@@ -77,6 +80,24 @@ export function QueryWorkspace() {
 
   if (!currentQuery) return null;
 
+  const handleSavePreset = () => {
+    if (isSaving) {
+      // Confirm save
+      if (saveName.trim()) {
+        savePreset(saveName.trim());
+        setSaveName("");
+        setIsSaving(false);
+      }
+    } else {
+      setIsSaving(true);
+    }
+  };
+
+  const handleCancelSave = () => {
+    setSaveName("");
+    setIsSaving(false);
+  };
+
   return (
     <section className="flex h-full flex-col overflow-hidden bg-secondary">
       <div className="flex items-center justify-between border-b border-border-secondary px-4 py-2.5 flex-shrink-0">
@@ -88,6 +109,43 @@ export function QueryWorkspace() {
             {currentQuery.schemaName}
           </span>
         </div>
+
+        {isSaving ? (
+          <div className="flex items-center gap-1.5">
+            <input
+              type="text"
+              value={saveName}
+              onChange={(e) => setSaveName(e.target.value)}
+              placeholder="Preset name..."
+              className="bg-secondary rounded-md px-2 py-1 text-[11px] text-primary placeholder:text-muted outline-none font-sans w-32 border border-border-secondary"
+              autoFocus
+              onKeyDown={(e) => {
+                if (e.key === "Enter") handleSavePreset();
+                if (e.key === "Escape") handleCancelSave();
+              }}
+            />
+            <button
+              onClick={handleSavePreset}
+              className="cursor-pointer rounded px-2 py-1 text-[11px] font-medium text-accent hover:bg-accent-surface transition-all duration-150 font-condensed"
+            >
+              Save
+            </button>
+            <button
+              onClick={handleCancelSave}
+              className="cursor-pointer rounded px-2 py-1 text-[11px] font-medium text-muted hover:text-secondary-text transition-all duration-150 font-condensed"
+            >
+              Cancel
+            </button>
+          </div>
+        ) : (
+          <button
+            onClick={handleSavePreset}
+            className="cursor-pointer flex items-center gap-1 rounded-md px-2.5 py-1 text-[11px] font-medium text-muted hover:text-accent hover:bg-accent-surface transition-all duration-150 font-condensed"
+          >
+            <Save size={12} />
+            Save
+          </button>
+        )}
       </div>
 
       <div className="flex-1 overflow-y-auto p-4">
