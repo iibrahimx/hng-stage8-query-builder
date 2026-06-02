@@ -5,6 +5,7 @@ import { useQueryStore } from "@/store/query-store";
 import { Header } from "@/components/ui/header";
 import { Layers, Play } from "lucide-react";
 import { SchemaPanel } from "@/components/query-builder/schema-panel";
+import { QueryWorkspace } from "@/components/query-builder/query-workspace";
 
 export default function Home() {
   const { currentQuery, initializeQuery, isDarkMode, toggleDarkMode } =
@@ -36,9 +37,12 @@ export default function Home() {
         </div>
 
         {/* Center Panel - Query Builder */}
-        <Panel title={null} width="flex-1" borderSide={null}>
+        {/* <Panel title={null} width="flex-1" borderSide={null}>
           <CenterEmptyState />
-        </Panel>
+        </Panel> */}
+        <div className="flex-1 flex flex-col overflow-hidden">
+          <QueryWorkspace />
+        </div>
 
         {/* Right Panel - Results */}
         <Panel
@@ -146,99 +150,99 @@ function EmptyState({
 // CENTER EMPTY STATE
 // ============================================================
 
-function CenterEmptyState() {
-  return (
-    <div className="flex h-full items-center justify-center bg-secondary p-8">
-      <div className="flex w-full max-w-[540px] flex-col items-center gap-4 rounded-[20px] border border-border-secondary bg-elevated px-8 py-8 text-center">
-        <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-accent-border bg-accent-surface">
-          <svg
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M4 6h16M4 12h10M4 18h6"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              className="text-accent"
-            />
-            <circle
-              cx="18"
-              cy="18"
-              r="3"
-              stroke="currentColor"
-              strokeWidth="2"
-              className="text-accent"
-            />
-            <path
-              d="M18 16v4M16 18h4"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              className="text-accent"
-            />
-          </svg>
-        </div>
-        <div>
-          <h2 className="text-[15px] font-semibold text-primary">
-            Start Building a Query
-          </h2>
-          <p className="mt-1.5 text-[13px] leading-relaxed text-muted">
-            Select a table from the schema explorer and add conditions to build
-            your query visually.
-          </p>
-        </div>
-        <div className="flex flex-wrap items-center justify-center gap-2 text-[11px] font-medium text-muted">
-          <FlowStep>Table</FlowStep>
-          <FlowChevron />
-          <FlowStep>Fields</FlowStep>
-          <FlowChevron />
-          <FlowStep>Filters</FlowStep>
-          <FlowChevron />
-          <FlowStep>Sort</FlowStep>
-          <FlowChevron />
-          <FlowStep accent>Results</FlowStep>
-        </div>
-      </div>
-    </div>
-  );
-}
+// function CenterEmptyState() {
+//   return (
+//     <div className="flex h-full items-center justify-center bg-secondary p-8">
+//       <div className="flex w-full max-w-[540px] flex-col items-center gap-4 rounded-[20px] border border-border-secondary bg-elevated px-8 py-8 text-center">
+//         <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-accent-border bg-accent-surface">
+//           <svg
+//             width="24"
+//             height="24"
+//             viewBox="0 0 24 24"
+//             fill="none"
+//             xmlns="http://www.w3.org/2000/svg"
+//           >
+//             <path
+//               d="M4 6h16M4 12h10M4 18h6"
+//               stroke="currentColor"
+//               strokeWidth="2"
+//               strokeLinecap="round"
+//               className="text-accent"
+//             />
+//             <circle
+//               cx="18"
+//               cy="18"
+//               r="3"
+//               stroke="currentColor"
+//               strokeWidth="2"
+//               className="text-accent"
+//             />
+//             <path
+//               d="M18 16v4M16 18h4"
+//               stroke="currentColor"
+//               strokeWidth="2"
+//               strokeLinecap="round"
+//               className="text-accent"
+//             />
+//           </svg>
+//         </div>
+//         <div>
+//           <h2 className="text-[15px] font-semibold text-primary">
+//             Start Building a Query
+//           </h2>
+//           <p className="mt-1.5 text-[13px] leading-relaxed text-muted">
+//             Select a table from the schema explorer and add conditions to build
+//             your query visually.
+//           </p>
+//         </div>
+//         <div className="flex flex-wrap items-center justify-center gap-2 text-[11px] font-medium text-muted">
+//           <FlowStep>Table</FlowStep>
+//           <FlowChevron />
+//           <FlowStep>Fields</FlowStep>
+//           <FlowChevron />
+//           <FlowStep>Filters</FlowStep>
+//           <FlowChevron />
+//           <FlowStep>Sort</FlowStep>
+//           <FlowChevron />
+//           <FlowStep accent>Results</FlowStep>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// }
 
-function FlowStep({
-  children,
-  accent,
-}: {
-  children: React.ReactNode;
-  accent?: boolean;
-}) {
-  return (
-    <span
-      className={`rounded-md px-2 py-1 ${
-        accent
-          ? "bg-accent-surface text-accent border border-accent-border"
-          : "bg-secondary text-muted"
-      }`}
-    >
-      {children}
-    </span>
-  );
-}
+// function FlowStep({
+//   children,
+//   accent,
+// }: {
+//   children: React.ReactNode;
+//   accent?: boolean;
+// }) {
+//   return (
+//     <span
+//       className={`rounded-md px-2 py-1 ${
+//         accent
+//           ? "bg-accent-surface text-accent border border-accent-border"
+//           : "bg-secondary text-muted"
+//       }`}
+//     >
+//       {children}
+//     </span>
+//   );
+// }
 
-function FlowChevron() {
-  return (
-    <svg
-      width="12"
-      height="12"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      opacity="0.4"
-    >
-      <path d="M9 18l6-6-6-6" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
+// function FlowChevron() {
+//   return (
+//     <svg
+//       width="12"
+//       height="12"
+//       viewBox="0 0 24 24"
+//       fill="none"
+//       stroke="currentColor"
+//       strokeWidth="2"
+//       opacity="0.4"
+//     >
+//       <path d="M9 18l6-6-6-6" strokeLinecap="round" strokeLinejoin="round" />
+//     </svg>
+//   );
+// }
