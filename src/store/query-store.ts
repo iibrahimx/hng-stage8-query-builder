@@ -16,6 +16,12 @@ import {
   UserRecord,
   productsSchema,
   productsDataset,
+  workersDataset,
+  ordersDataset,
+  citiesDataset,
+  citiesSchema,
+  workersSchema,
+  ordersSchema,
 } from "@/data";
 import {
   STORAGE_KEYS,
@@ -62,8 +68,10 @@ interface QueryState {
 
   hasExecuted: boolean;
 
-  activeSchema: "users" | "products";
-  switchSchema: (schemaName: "users" | "products") => void;
+  activeSchema: "users" | "products" | "orders" | "workers" | "cities";
+  switchSchema: (
+    schemaName: "users" | "products" | "orders" | "workers" | "cities",
+  ) => void;
 
   // --- Actions ---
   initializeQuery: () => void;
@@ -208,19 +216,25 @@ export const useQueryStore = create<QueryState>((set, get) => ({
   activeSchema: "users" as const,
 
   // ACTION: Switch schema
-  switchSchema: (schemaName: "users" | "products") => {
-    const newSchema =
-      schemaName === "users" ? usersSchema.fields : productsSchema.fields;
-    const newDataset = schemaName === "users" ? usersDataset : productsDataset;
+  switchSchema: (
+    schemaName: "users" | "products" | "orders" | "workers" | "cities",
+  ) => {
+    const schemaMap = {
+      users: { schema: usersSchema, dataset: usersDataset },
+      products: { schema: productsSchema, dataset: productsDataset },
+      orders: { schema: ordersSchema, dataset: ordersDataset },
+      workers: { schema: workersSchema, dataset: workersDataset },
+      cities: { schema: citiesSchema, dataset: citiesDataset },
+    };
+    const config = schemaMap[schemaName];
     set({
       activeSchema: schemaName,
-      schema: newSchema as unknown as FieldDefinition[],
-      dataset: newDataset as unknown as UserRecord[],
+      schema: config.schema.fields as unknown as FieldDefinition[],
+      dataset: config.dataset as unknown as UserRecord[],
       results: null,
       resultCount: 0,
       hasExecuted: false,
     });
-    // Also reset the query for the new schema
     const newQuery = createFreshQuery();
     newQuery.schemaName = schemaName;
     const preview = generateQueryPreview(newQuery.rootGroup, schemaName);

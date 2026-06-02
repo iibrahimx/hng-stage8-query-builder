@@ -51,10 +51,6 @@ export function SchemaPanel() {
           <h2 className="text-xs font-semibold uppercase tracking-wider text-secondary-text">
             Schema Explorer
           </h2>
-          <div className="flex items-center gap-1 ml-2">
-            <SchemaTab name="users" />
-            <SchemaTab name="products" />
-          </div>
         </div>
         <div className="flex flex-1 items-center justify-center p-6">
           <div className="flex w-full max-w-[220px] flex-col items-center gap-4 rounded-2xl border border-border-secondary bg-elevated px-5 py-8 text-center">
@@ -91,8 +87,13 @@ export function SchemaPanel() {
           Schema Explorer
         </h2>
         <div className="flex items-center gap-1">
-          <SchemaTab name="users" />
-          <SchemaTab name="products" />
+          <div className="flex items-center gap-1">
+            <SchemaTab name="users" />
+            <SchemaTab name="products" />
+            <SchemaTab name="orders" />
+            <SchemaTab name="workers" />
+            <SchemaTab name="cities" />
+          </div>
         </div>
         <span className="ml-auto text-[11px] text-muted font-mono">
           {filteredFields.length}/{schema.length}
@@ -206,7 +207,11 @@ function SchemaField({
 // SCHEMA TAB COMPONENT
 // ============================================================
 
-function SchemaTab({ name }: { name: "users" | "products" }) {
+function SchemaTab({
+  name,
+}: {
+  name: "users" | "products" | "orders" | "workers" | "cities";
+}) {
   const activeSchema = useQueryStore((state) => state.activeSchema);
   const switchSchema = useQueryStore((state) => state.switchSchema);
 
