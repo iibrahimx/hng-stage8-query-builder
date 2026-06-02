@@ -16,6 +16,8 @@ export function ResultsPanel() {
   const hasQuery = currentQuery && currentQuery.rootGroup.children.length > 0;
   const hasResults = results && results.length > 0;
 
+  const hasExecuted = useQueryStore((state) => state.hasExecuted);
+
   return (
     <aside className="flex w-full h-full flex-col overflow-hidden bg-panel">
       {/* Panel Header */}
@@ -93,8 +95,37 @@ export function ResultsPanel() {
           </div>
         )}
 
+        {/* Empty State - Executed but no results */}
+        {!isExecuting && hasExecuted && !hasResults && (
+          <div className="flex flex-col items-center justify-center gap-3 py-16 px-6 text-center">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-danger-surface text-danger">
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <circle cx="12" cy="12" r="10" />
+                <line x1="12" y1="8" x2="12" y2="12" />
+                <line x1="12" y1="16" x2="12.01" y2="16" />
+              </svg>
+            </div>
+            <p className="text-[13px] font-medium text-primary">
+              No Results Found
+            </p>
+            <p className="text-[12px] leading-relaxed text-muted">
+              Your query ran successfully but returned no matching records. Try
+              adjusting your conditions.
+            </p>
+          </div>
+        )}
+
         {/* Empty State - Has query but not executed */}
-        {!isExecuting && hasQuery && !hasResults && (
+        {!isExecuting && hasQuery && !hasExecuted && !hasResults && (
           <div className="flex flex-col items-center justify-center gap-4 py-16 px-6 text-center">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-secondary text-muted">
               <Play size={20} />
