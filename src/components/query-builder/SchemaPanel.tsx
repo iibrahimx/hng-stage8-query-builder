@@ -51,6 +51,10 @@ export function SchemaPanel() {
           <h2 className="text-xs font-semibold uppercase tracking-wider text-secondary-text">
             Schema Explorer
           </h2>
+          <div className="flex items-center gap-1 ml-2">
+            <SchemaTab name="users" />
+            <SchemaTab name="products" />
+          </div>
         </div>
         <div className="flex flex-1 items-center justify-center p-6">
           <div className="flex w-full max-w-[220px] flex-col items-center gap-4 rounded-2xl border border-border-secondary bg-elevated px-5 py-8 text-center">
@@ -86,6 +90,10 @@ export function SchemaPanel() {
         <h2 className="text-xs font-semibold uppercase tracking-wider text-secondary-text">
           Schema Explorer
         </h2>
+        <div className="flex items-center gap-1">
+          <SchemaTab name="users" />
+          <SchemaTab name="products" />
+        </div>
         <span className="ml-auto text-[11px] text-muted font-mono">
           {filteredFields.length}/{schema.length}
         </span>
@@ -190,6 +198,28 @@ function SchemaField({
           {field.options.length} values
         </span>
       )}
+    </button>
+  );
+}
+
+// ============================================================
+// SCHEMA TAB COMPONENT
+// ============================================================
+
+function SchemaTab({ name }: { name: "users" | "products" }) {
+  const activeSchema = useQueryStore((state) => state.activeSchema);
+  const switchSchema = useQueryStore((state) => state.switchSchema);
+
+  return (
+    <button
+      onClick={() => switchSchema(name)}
+      className={`cursor-pointer rounded-md px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider font-condensed transition-all duration-150 ${
+        activeSchema === name
+          ? "bg-accent-surface text-accent border border-accent-border"
+          : "text-muted hover:text-secondary-text hover:bg-hover"
+      }`}
+    >
+      {name}
     </button>
   );
 }

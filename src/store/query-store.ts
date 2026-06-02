@@ -10,7 +10,13 @@ import {
 } from "@/types";
 import { generateId, deepClone } from "@/lib/utils";
 import { executeQuery, generateQueryPreview } from "@/lib/query-engine";
-import { usersSchema, usersDataset, UserRecord } from "@/data";
+import {
+  usersSchema,
+  usersDataset,
+  UserRecord,
+  productsSchema,
+  productsDataset,
+} from "@/data";
 import {
   STORAGE_KEYS,
   getStoredBoolean,
@@ -55,6 +61,9 @@ interface QueryState {
   ) => void;
 
   hasExecuted: boolean;
+
+  activeSchema: "users" | "products";
+  switchSchema: (schemaName: "users" | "products") => void;
 
   // --- Actions ---
   initializeQuery: () => void;
@@ -196,6 +205,27 @@ export const useQueryStore = create<QueryState>((set, get) => ({
     set({ historyMode: mode });
   },
   hasExecuted: false,
+  activeSchema: "users" as const,
+
+  // ACTION: Switch schema
+  switchSchema: (schemaName: "users" | "products") => {
+    const newSchema =
+      schemaName === "users" ? usersSchema.fields : productsSchema.fields;
+    const newDataset = schemaName === "users" ? usersDataset : productsDataset;
+    set({
+      activeSchema: schemaName,
+      schema: newSchema as unknown as FieldDefinition[],
+      dataset: newDataset as unknown as UserRecord[],
+      results: null,
+      resultCount: 0,
+      hasExecuted: false,
+    });
+    // Also reset the query for the new schema
+    const newQuery = createFreshQuery();
+    newQuery.schemaName = schemaName;
+    const preview = generateQueryPreview(newQuery.rootGroup, schemaName);
+    set({ currentQuery: newQuery, queryPreview: preview });
+  },
 
   // --- ACTION: Initialize a fresh query ---
   initializeQuery: () => {
