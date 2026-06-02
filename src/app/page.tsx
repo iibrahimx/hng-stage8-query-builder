@@ -3,12 +3,11 @@
 import { useEffect } from "react";
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import { useQueryStore } from "@/store/query-store";
-import { Header } from "@/components/ui/header";
-// import { Play } from "lucide-react";
-import { SchemaPanel } from "@/components/query-builder/schema-panel";
-import { QueryWorkspace } from "@/components/query-builder/query-workspace";
-import { ResultsPanel } from "@/components/query-builder/results-panel";
-import { HistoryPanel } from "@/components/query-builder/history-panel";
+import { Header } from "@/components/ui/Header";
+import { SchemaPanel } from "@/components/query-builder/SchemaPanel";
+import { QueryWorkspace } from "@/components/query-builder/QueryWorkspace";
+import { ResultsPanel } from "@/components/query-builder/ResultsPanel";
+import { HistoryPanel } from "@/components/query-builder/HistoryPanel";
 
 export default function Home() {
   const { currentQuery, initializeQuery, isDarkMode, toggleDarkMode } =

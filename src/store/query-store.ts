@@ -54,6 +54,8 @@ interface QueryState {
     newIndex: number,
   ) => void;
 
+  hasExecuted: boolean;
+
   // --- Actions ---
   initializeQuery: () => void;
   addCondition: (parentGroupId: string) => void;
@@ -193,6 +195,7 @@ export const useQueryStore = create<QueryState>((set, get) => ({
   setHistoryMode: (mode: boolean) => {
     set({ historyMode: mode });
   },
+  hasExecuted: false,
 
   // --- ACTION: Initialize a fresh query ---
   initializeQuery: () => {
@@ -453,6 +456,7 @@ export const useQueryStore = create<QueryState>((set, get) => ({
         results: filtered as unknown as UserRecord[],
         resultCount: filtered.length,
         isExecuting: false,
+        hasExecuted: true,
       });
     }, 300);
   },
@@ -539,7 +543,7 @@ export const useQueryStore = create<QueryState>((set, get) => ({
 
   // --- ACTION: Clear results ---
   clearResults: () => {
-    set({ results: null, resultCount: 0 });
+    set({ results: null, resultCount: 0, hasExecuted: false });
   },
 
   // --- ACTION: Load the schema ---
