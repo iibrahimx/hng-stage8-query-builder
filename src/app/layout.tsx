@@ -20,23 +20,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-          try {
-            const dark = localStorage.getItem('query-builder-theme');
-            if (dark === 'true') {
-              document.documentElement.classList.add('dark');
-            }
-          } catch {}
-        `,
-          }}
-        />
-      </head>
-
-      <body className="min-h-screen antialiased">{children}</body>
+    <html
+      lang="en"
+      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+    >
+      <body className="min-h-full flex flex-col">{children}</body>
     </html>
   );
 }
