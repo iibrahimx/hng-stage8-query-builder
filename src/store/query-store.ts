@@ -23,6 +23,7 @@ interface QueryState {
   schema: FieldDefinition[];
   dataset: UserRecord[];
   results: UserRecord[] | null;
+  schemaLoaded: boolean;
 
   // --- UI State ---
   queryPreview: string;
@@ -56,6 +57,7 @@ interface QueryState {
   importQuery: (json: string) => boolean;
   toggleDarkMode: () => void;
   clearResults: () => void;
+  loadSchema: () => void;
 }
 
 // ============================================================
@@ -161,6 +163,7 @@ export const useQueryStore = create<QueryState>((set, get) => ({
   schema: usersSchema.fields,
   dataset: [],
   results: null,
+  schemaLoaded: false,
   queryPreview: "",
   validationErrors: [],
   isExecuting: false,
@@ -465,5 +468,10 @@ export const useQueryStore = create<QueryState>((set, get) => ({
   // --- ACTION: Clear results ---
   clearResults: () => {
     set({ results: null, resultCount: 0 });
+  },
+
+  // --- ACTION: Load the schema ---
+  loadSchema: () => {
+    set({ schemaLoaded: true });
   },
 }));
