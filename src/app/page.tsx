@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import { useQueryStore } from "@/store/query-store";
 import { Header } from "@/components/ui/header";
 // import { Play } from "lucide-react";
@@ -43,19 +44,29 @@ export default function Home() {
     <div className="flex h-screen flex-col overflow-hidden bg-app">
       <Header isDarkMode={isDarkMode} onToggleDarkMode={toggleDarkMode} />
 
-      <main className="flex flex-1 flex-col lg:flex-row overflow-hidden">
+      {/* <main className="flex flex-1 flex-col lg:flex-row overflow-hidden"> */}
+      <PanelGroup direction="horizontal" className="flex flex-1 h-full">
         {/* Left Panel - Schema Explorer */}
-        <div className="w-full lg:w-72 flex-shrink-0 flex flex-col overflow-hidden bg-panel border-r border-border-secondary">
-          <SchemaPanel />
-        </div>
+        <Panel defaultSize={22} minSize={18} maxSize={30}>
+          {/* Left Panel - Schema Explorer */}
+          <div className="h-full flex flex-col overflow-hidden bg-panel border-r border-border-secondary">
+            <SchemaPanel />
+          </div>
+        </Panel>
+
+        <ResizeHandle />
 
         {/* Center Panel - Query Builder */}
         {/* <Panel title={null} width="flex-1" borderSide={null}>
           <CenterEmptyState />
         </Panel> */}
-        <div className="flex-1 flex flex-col overflow-hidden">
-          <QueryWorkspace />
-        </div>
+        <Panel defaultSize={40} minSize={35}>
+          <div className="flex-1 flex flex-col overflow-hidden">
+            <QueryWorkspace />
+          </div>
+        </Panel>
+
+        <ResizeHandle />
 
         {/* Right Panel - Results */}
         {/* <Panel
@@ -77,11 +88,20 @@ export default function Home() {
             }}
           />
         </Panel> */}
-        <div className="w-full lg:w-96 flex-shrink-0 flex flex-col overflow-hidden bg-panel border-l border-border-secondary">
-          <ResultsPanel />
-        </div>
-      </main>
+        <Panel defaultSize={22} minSize={30} maxSize={40}>
+          <div className="h-full flex flex-col overflow-hidden bg-panel border-l border-border-secondary">
+            <ResultsPanel />
+          </div>
+        </Panel>
+      </PanelGroup>
+      {/* </main> */}
     </div>
+  );
+}
+
+function ResizeHandle() {
+  return (
+    <PanelResizeHandle className="w-[4px] bg-border-secondary hover:bg-accent active:bg-accent transition-colors duration-150 cursor-col-resize" />
   );
 }
 
