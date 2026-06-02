@@ -201,6 +201,25 @@ export const useQueryStore = create<QueryState>((set, get) => ({
     if (!currentQuery) return;
 
     const newCondition = createEmptyCondition();
+
+    // Special case: adding to root group directly
+    if (parentGroupId === currentQuery.rootGroup.id) {
+      const updatedQuery: Query = {
+        ...currentQuery,
+        rootGroup: {
+          ...currentQuery.rootGroup,
+          children: [...currentQuery.rootGroup.children, newCondition],
+        },
+        updatedAt: new Date(),
+      };
+      const preview = generateQueryPreview(
+        updatedQuery.rootGroup,
+        updatedQuery.schemaName,
+      );
+      set({ currentQuery: updatedQuery, queryPreview: preview });
+      return;
+    }
+
     const updatedChildren = updateNodeInTree(
       currentQuery.rootGroup.children,
       parentGroupId,
@@ -237,6 +256,25 @@ export const useQueryStore = create<QueryState>((set, get) => ({
     if (!currentQuery) return;
 
     const newGroup = createEmptyGroup("AND");
+
+    // Special case: adding to root group directly
+    if (parentGroupId === currentQuery.rootGroup.id) {
+      const updatedQuery: Query = {
+        ...currentQuery,
+        rootGroup: {
+          ...currentQuery.rootGroup,
+          children: [...currentQuery.rootGroup.children, newGroup],
+        },
+        updatedAt: new Date(),
+      };
+      const preview = generateQueryPreview(
+        updatedQuery.rootGroup,
+        updatedQuery.schemaName,
+      );
+      set({ currentQuery: updatedQuery, queryPreview: preview });
+      return;
+    }
+
     const updatedChildren = updateNodeInTree(
       currentQuery.rootGroup.children,
       parentGroupId,

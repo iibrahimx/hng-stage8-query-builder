@@ -17,7 +17,7 @@ export function ResultsPanel() {
   const hasResults = results && results.length > 0;
 
   return (
-    <aside className="flex h-full flex-col overflow-hidden bg-panel">
+    <aside className="flex w-full h-full flex-col overflow-hidden bg-panel">
       {/* Panel Header */}
       <div className="flex items-center gap-2 border-b border-border-secondary px-4 py-2.5 flex-shrink-0">
         <Play size={13} className="text-muted" />
@@ -43,9 +43,9 @@ export function ResultsPanel() {
 
         {/* Results Table */}
         {!isExecuting && hasResults && (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left">
-              <thead>
+          <div className="overflow-auto flex-1">
+            <table className="w-full text-left min-w-full">
+              <thead className="sticky top-0 bg-panel z-10">
                 <tr className="border-b border-border-secondary">
                   {Object.keys(results[0]).map((key) => (
                     <th
@@ -66,7 +66,7 @@ export function ResultsPanel() {
                     {Object.values(row).map((val, colIdx) => (
                       <td
                         key={colIdx}
-                        className="px-3 py-2 text-[12px] text-primary font-mono whitespace-nowrap"
+                        className="px-3 py-2 text-[12px] text-primary font-mono"
                       >
                         {formatCellValue(val)}
                       </td>
@@ -116,15 +116,33 @@ export function ResultsPanel() {
           </div>
         )}
 
-        {/* Has results - show execute again button */}
+        {/* Has results - show Run Again and Clear buttons */}
         {!isExecuting && hasResults && (
-          <div className="border-t border-border-secondary px-4 py-2.5">
+          <div className="flex items-center justify-between border-t border-border-secondary px-4 py-2.5">
             <button
               onClick={executeCurrentQuery}
               className="cursor-pointer flex items-center gap-1.5 rounded-md px-3 py-1.5 text-[11px] font-medium text-muted hover:text-primary hover:bg-hover transition-all duration-150 font-condensed"
             >
               <Play size={12} />
               Run Again
+            </button>
+            <button
+              onClick={clearResults}
+              className="cursor-pointer flex items-center gap-1.5 rounded-md px-3 py-1.5 text-[11px] font-medium text-muted hover:text-danger hover:bg-danger-surface transition-all duration-150 font-condensed"
+            >
+              <svg
+                width="12"
+                height="12"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M18 6L6 18M6 6l12 12" />
+              </svg>
+              Clear
             </button>
           </div>
         )}

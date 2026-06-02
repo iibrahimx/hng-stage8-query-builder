@@ -1,6 +1,7 @@
 "use client";
 
 import { Moon, Sun, Database, History, Download, Upload } from "lucide-react";
+import { useQueryStore } from "@/store/query-store";
 
 interface HeaderProps {
   isDarkMode: boolean;
@@ -8,6 +9,72 @@ interface HeaderProps {
 }
 
 export function Header({ isDarkMode, onToggleDarkMode }: HeaderProps) {
+  //   const exportQuery = useQueryStore((state) => state.exportQuery);
+  const importQuery = useQueryStore((state) => state.importQuery);
+
+  const results = useQueryStore((state) => state.results);
+
+  const handleExport = () => {
+    // If there are results, export as CSV
+    if (results && results.length > 0) {
+      const headers = Object.keys(results[0]).join(",");
+      const rows = results.map((row) =>
+        Object.values(row)
+          .map((val) => {
+            const str = String(val ?? "");
+            // Escape quotes and wrap in quotes if contains comma
+            return str.includes(",") || str.includes('"')
+              ? `"${str.replace(/"/g, '""')}"`
+              : str;
+          })
+          .join(","),
+      );
+      const csv = [headers, ...rows].join("\n");
+      downloadFile(csv, "query-results.csv", "text/csv");
+      return;
+    }
+
+    // Otherwise export the query JSON
+    const query = useQueryStore.getState().currentQuery;
+    if (query) {
+      const json = JSON.stringify(query, null, 2);
+      downloadFile(json, "query-export.json", "application/json");
+    }
+  };
+
+  function downloadFile(content: string, filename: string, mimeType: string) {
+    const blob = new Blob([content], { type: mimeType });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  // Function to handle import
+  const handleImport = () => {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = ".json";
+    input.onchange = (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const text = event.target?.result as string;
+        const success = importQuery(text);
+        if (!success) {
+          alert("Invalid query file. Please check the format and try again.");
+        }
+      };
+      reader.readAsText(file);
+    };
+    input.click();
+  };
+
   return (
     <header className="flex h-auto min-h-11 flex-wrap items-center justify-between gap-2 border-b border-border-default px-3 md:px-4 py-2 flex-shrink-0 select-none bg-panel">
       {/* LEFT: Logo & Title */}
@@ -27,8 +94,18 @@ export function Header({ isDarkMode, onToggleDarkMode }: HeaderProps) {
           active
         />
         <NavButton icon={<History size={13} />} label="History" shortcut="2" />
-        <NavButton icon={<Download size={13} />} label="Export" shortcut="3" />
-        <NavButton icon={<Upload size={13} />} label="Import" shortcut="4" />
+        <NavButton
+          icon={<Download size={13} />}
+          label="Export"
+          shortcut="3"
+          onClick={handleExport}
+        />
+        <NavButton
+          icon={<Upload size={13} />}
+          label="Import"
+          shortcut="4"
+          onClick={handleImport}
+        />
       </nav>
 
       {/* RIGHT: Theme Toggle - renders both icons, shows one via CSS */}
@@ -105,14 +182,17 @@ function NavButton({
   label,
   shortcut,
   active = false,
+  onClick,
 }: {
   icon: React.ReactNode;
   label: string;
   shortcut: string;
   active?: boolean;
+  onClick?: () => void;
 }) {
   return (
     <button
+      onClick={onClick}
       className={`cursor-pointer flex items-center gap-1.5 rounded-md px-2.5 py-1 text-[12px] font-medium transition-all duration-150 ${
         active
           ? "bg-accent-surface border border-accent-border text-accent shadow-none"
