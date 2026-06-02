@@ -146,11 +146,11 @@
    ============================================================ */
 .dark {
   /* --- Backgrounds (Layered warm darks) --- */
-  --color-bg-page: #111315;
-  --color-bg-card: #17191d;
-  --color-bg-secondary: #1d2127;
-  --color-bg-elevated: #222831;
-  --color-bg-hover: #2b3440;
+  --color-bg-page: #0c0a09;
+  --color-bg-card: #1c1917;
+  --color-bg-secondary: #24201e;
+  --color-bg-elevated: #292524;
+  --color-bg-hover: #35312e;
 
   /* --- Text --- */
   --color-text-primary: #fafaf9;
@@ -158,8 +158,8 @@
   --color-text-muted: #78716c;
 
   /* --- Borders --- */
-  --color-border-default: #323844;
-  --color-border-secondary: #272d38;
+  --color-border-default: #44403c;
+  --color-border-secondary: #35312e;
   --color-border-light: #292524;
 
   /* --- Primary Green (brighter for dark mode contrast) --- */

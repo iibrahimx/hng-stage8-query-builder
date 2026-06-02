@@ -13,7 +13,7 @@ export function Header({ isDarkMode, onToggleDarkMode }: HeaderProps) {
       {/* LEFT: Logo + Title */}
       <div className="flex items-center gap-2.5">
         <LogoMark />
-        <span className="text-[13px] font-semibold tracking-widest text-primary uppercase">
+        <span className="text-[13px] font-semibold tracking-tight text-primary">
           Query Builder
         </span>
       </div>
@@ -58,7 +58,7 @@ function LogoMark() {
       {/* Subtle premium glow */}
       <div className="absolute inset-0 rounded-md bg-[radial-gradient(circle,rgba(22,163,74,0.25)_0%,transparent_70%)] blur-[3px]" />
       {/* Main logo */}
-      <div className="relative flex h-7 w-7 items-center justify-center rounded-md bg-accent shadow-[0_0_6px_rgba(22,163,74,0.18)]">
+      <div className="relative flex h-7 w-7 items-center justify-center rounded-md bg-accent shadow-[0_0_10px_rgba(22,163,74,0.3)]">
         <svg
           width="14"
           height="14"
