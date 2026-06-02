@@ -44,6 +44,9 @@ interface QueryState {
 
   hydrated: boolean;
 
+  historyMode: boolean;
+  setHistoryMode: (mode: boolean) => void;
+
   // --- Actions ---
   initializeQuery: () => void;
   addCondition: (parentGroupId: string) => void;
@@ -179,6 +182,10 @@ export const useQueryStore = create<QueryState>((set, get) => ({
   savedPresets: [],
   isDarkMode: false,
   hydrated: false,
+  historyMode: false,
+  setHistoryMode: (mode: boolean) => {
+    set({ historyMode: mode });
+  },
 
   // --- ACTION: Initialize a fresh query ---
   initializeQuery: () => {
@@ -418,6 +425,16 @@ export const useQueryStore = create<QueryState>((set, get) => ({
     if (!currentQuery || dataset.length === 0) return;
 
     set({ isExecuting: true });
+
+    // Inside executeCurrentQuery, after the set() call:
+    const { queryHistory } = get();
+    const historyEntry: SavedQuery = {
+      id: generateId(),
+      name: `Query ${queryHistory.length + 1} - ${new Date().toLocaleTimeString()}`,
+      query: deepClone(currentQuery),
+      savedAt: new Date(),
+    };
+    set({ queryHistory: [...queryHistory, historyEntry] });
 
     // Simulate async execution for loading state
     setTimeout(() => {
