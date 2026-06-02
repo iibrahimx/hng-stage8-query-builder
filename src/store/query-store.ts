@@ -552,22 +552,32 @@ export const useQueryStore = create<QueryState>((set, get) => ({
     const { currentQuery } = get();
     if (!currentQuery) return;
 
-    const reorder = (nodes: QueryNode[]): QueryNode[] => {
-      return nodes.map((node) => {
-        if (node.id === groupId && node.type === "group") {
-          const newChildren = [...node.children];
-          const [moved] = newChildren.splice(oldIndex, 1);
-          newChildren.splice(newIndex, 0, moved);
-          return { ...node, children: newChildren };
-        }
-        if (node.type === "group") {
-          return { ...node, children: reorder(node.children) };
-        }
-        return node;
-      });
-    };
+    let updatedChildren: QueryNode[];
 
-    const updatedChildren = reorder(currentQuery.rootGroup.children);
+    // Special case: reordering directly in root group
+    if (groupId === currentQuery.rootGroup.id) {
+      updatedChildren = [...currentQuery.rootGroup.children];
+      const [moved] = updatedChildren.splice(oldIndex, 1);
+      updatedChildren.splice(newIndex, 0, moved);
+    } else {
+      // Nested group - walk the tree
+      const reorder = (nodes: QueryNode[]): QueryNode[] => {
+        return nodes.map((node) => {
+          if (node.id === groupId && node.type === "group") {
+            const newChildren = [...node.children];
+            const [moved] = newChildren.splice(oldIndex, 1);
+            newChildren.splice(newIndex, 0, moved);
+            return { ...node, children: newChildren };
+          }
+          if (node.type === "group") {
+            return { ...node, children: reorder(node.children) };
+          }
+          return node;
+        });
+      };
+      updatedChildren = reorder(currentQuery.rootGroup.children);
+    }
+
     const updatedQuery: Query = {
       ...currentQuery,
       rootGroup: { ...currentQuery.rootGroup, children: updatedChildren },
