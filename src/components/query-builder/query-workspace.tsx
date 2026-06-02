@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, memo } from "react";
 import { useQueryStore } from "@/store/query-store";
 import { Plus, Trash2, ChevronRight, GripVertical, Save } from "lucide-react";
 import { Operator } from "@/types";
@@ -19,12 +19,18 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { validateQuery } from "@/lib/query-engine";
 
 export function QueryWorkspace() {
   const currentQuery = useQueryStore((state) => state.currentQuery);
   const schemaLoaded = useQueryStore((state) => state.schemaLoaded);
   const queryPreview = useQueryStore((state) => state.queryPreview);
   const savePreset = useQueryStore((state) => state.savePreset);
+  const schema = useQueryStore((state) => state.schema);
+  const validationErrors = currentQuery
+    ? validateQuery(currentQuery.rootGroup, schema)
+    : [];
+
   const [isSaving, setIsSaving] = useState(false);
   const [saveName, setSaveName] = useState("");
 
@@ -152,6 +158,19 @@ export function QueryWorkspace() {
         <GroupNode group={currentQuery.rootGroup} isRoot />
       </div>
 
+      {validationErrors.length > 0 && (
+        <div className="border-t border-danger/20 bg-danger-surface px-4 py-2 flex-shrink-0">
+          {validationErrors.map((error) => (
+            <p
+              key={error.nodeId}
+              className="text-[11px] text-danger font-mono flex items-center gap-1"
+            >
+              <span>⚠</span> {error.message}
+            </p>
+          ))}
+        </div>
+      )}
+
       <div className="border-t border-border-secondary flex-shrink-0">
         <div className="flex items-center gap-2 px-4 py-2.5">
           <span className="text-[10px] font-semibold uppercase tracking-wider text-muted font-condensed">
@@ -187,7 +206,10 @@ interface GroupNodeProps {
   isRoot?: boolean;
 }
 
-function GroupNode({ group, isRoot = false }: GroupNodeProps) {
+const GroupNode = memo(function GroupNode({
+  group,
+  isRoot = false,
+}: GroupNodeProps) {
   const updateLogicalOperator = useQueryStore(
     (state) => state.updateLogicalOperator,
   );
@@ -328,13 +350,13 @@ function GroupNode({ group, isRoot = false }: GroupNodeProps) {
       )}
     </div>
   );
-}
+});
 
 // ============================================================
 // SORTABLE CONDITION WRAPPER
 // ============================================================
 
-function SortableCondition({
+const SortableCondition = memo(function SortableCondition({
   id,
   children,
 }: {
@@ -361,7 +383,7 @@ function SortableCondition({
       {children}
     </div>
   );
-}
+});
 
 // ============================================================
 // CONDITION NODE
@@ -376,7 +398,9 @@ interface ConditionNodeProps {
   };
 }
 
-function ConditionNode({ condition }: ConditionNodeProps) {
+const ConditionNode = memo(function ConditionNode({
+  condition,
+}: ConditionNodeProps) {
   const schema = useQueryStore((state) => state.schema);
   const updateCondition = useQueryStore((state) => state.updateCondition);
   const removeNode = useQueryStore((state) => state.removeNode);
@@ -545,4 +569,4 @@ function ConditionNode({ condition }: ConditionNodeProps) {
       </button>
     </div>
   );
-}
+});
