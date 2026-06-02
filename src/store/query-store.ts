@@ -13,7 +13,9 @@ import { executeQuery, generateQueryPreview } from "@/lib/query-engine";
 import { usersSchema, usersDataset, UserRecord } from "@/data";
 import {
   STORAGE_KEYS,
+  getCookie,
   getStoredBoolean,
+  setCookie,
   setStoredBoolean,
 } from "@/lib/storage";
 
@@ -189,6 +191,25 @@ export const useQueryStore = create<QueryState>((set, get) => ({
 
   // --- ACTION: Initialize a fresh query ---
   initializeQuery: () => {
+    // Try to restore saved query from cookie
+    const savedQueryJson = getCookie("query-builder-current-query");
+    if (savedQueryJson) {
+      try {
+        const savedQuery = JSON.parse(savedQueryJson);
+        const preview = generateQueryPreview(
+          savedQuery.rootGroup,
+          savedQuery.schemaName,
+        );
+        set({
+          currentQuery: savedQuery,
+          queryPreview: preview,
+          results: null,
+          validationErrors: [],
+        });
+        return;
+      } catch {}
+    }
+
     const newQuery = createFreshQuery();
     const preview = generateQueryPreview(
       newQuery.rootGroup,
@@ -224,6 +245,7 @@ export const useQueryStore = create<QueryState>((set, get) => ({
         updatedQuery.schemaName,
       );
       set({ currentQuery: updatedQuery, queryPreview: preview });
+      setCookie("query-builder-current-query", JSON.stringify(updatedQuery));
       return;
     }
 
@@ -255,6 +277,7 @@ export const useQueryStore = create<QueryState>((set, get) => ({
       updatedQuery.schemaName,
     );
     set({ currentQuery: updatedQuery, queryPreview: preview });
+    setCookie("query-builder-current-query", JSON.stringify(updatedQuery));
   },
 
   // --- ACTION: Add a nested group ---
@@ -279,6 +302,7 @@ export const useQueryStore = create<QueryState>((set, get) => ({
         updatedQuery.schemaName,
       );
       set({ currentQuery: updatedQuery, queryPreview: preview });
+      setCookie("query-builder-current-query", JSON.stringify(updatedQuery));
       return;
     }
 
@@ -310,6 +334,7 @@ export const useQueryStore = create<QueryState>((set, get) => ({
       updatedQuery.schemaName,
     );
     set({ currentQuery: updatedQuery, queryPreview: preview });
+    setCookie("query-builder-current-query", JSON.stringify(updatedQuery));
   },
 
   // --- ACTION: Remove a node ---
@@ -343,6 +368,7 @@ export const useQueryStore = create<QueryState>((set, get) => ({
       updatedQuery.schemaName,
     );
     set({ currentQuery: updatedQuery, queryPreview: preview });
+    setCookie("query-builder-current-query", JSON.stringify(updatedQuery));
   },
 
   // --- ACTION: Update a condition's field, operator, or value ---
@@ -378,6 +404,7 @@ export const useQueryStore = create<QueryState>((set, get) => ({
       updatedQuery.schemaName,
     );
     set({ currentQuery: updatedQuery, queryPreview: preview });
+    setCookie("query-builder-current-query", JSON.stringify(updatedQuery));
   },
 
   // --- ACTION: Toggle AND/OR on a group ---
@@ -410,6 +437,7 @@ export const useQueryStore = create<QueryState>((set, get) => ({
       updatedQuery.schemaName,
     );
     set({ currentQuery: updatedQuery, queryPreview: preview });
+    setCookie("query-builder-current-query", JSON.stringify(updatedQuery));
   },
 
   // --- ACTION: Toggle group collapse (handled in UI) ---
