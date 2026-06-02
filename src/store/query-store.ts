@@ -42,6 +42,11 @@ interface QueryState {
   // --- Theme ---
   isDarkMode: boolean;
 
+  hydrated: boolean;
+
+  historyMode: boolean;
+  setHistoryMode: (mode: boolean) => void;
+
   // --- Actions ---
   initializeQuery: () => void;
   addCondition: (parentGroupId: string) => void;
@@ -62,6 +67,7 @@ interface QueryState {
   toggleDarkMode: () => void;
   clearResults: () => void;
   loadSchema: () => void;
+  hydrateFromStorage: () => void;
 }
 
 // ============================================================
@@ -175,6 +181,11 @@ export const useQueryStore = create<QueryState>((set, get) => ({
   queryHistory: [],
   savedPresets: [],
   isDarkMode: false,
+  hydrated: false,
+  historyMode: false,
+  setHistoryMode: (mode: boolean) => {
+    set({ historyMode: mode });
+  },
 
   // --- ACTION: Initialize a fresh query ---
   initializeQuery: () => {
@@ -197,6 +208,25 @@ export const useQueryStore = create<QueryState>((set, get) => ({
     if (!currentQuery) return;
 
     const newCondition = createEmptyCondition();
+
+    // Special case: adding to root group directly
+    if (parentGroupId === currentQuery.rootGroup.id) {
+      const updatedQuery: Query = {
+        ...currentQuery,
+        rootGroup: {
+          ...currentQuery.rootGroup,
+          children: [...currentQuery.rootGroup.children, newCondition],
+        },
+        updatedAt: new Date(),
+      };
+      const preview = generateQueryPreview(
+        updatedQuery.rootGroup,
+        updatedQuery.schemaName,
+      );
+      set({ currentQuery: updatedQuery, queryPreview: preview });
+      return;
+    }
+
     const updatedChildren = updateNodeInTree(
       currentQuery.rootGroup.children,
       parentGroupId,
@@ -233,6 +263,25 @@ export const useQueryStore = create<QueryState>((set, get) => ({
     if (!currentQuery) return;
 
     const newGroup = createEmptyGroup("AND");
+
+    // Special case: adding to root group directly
+    if (parentGroupId === currentQuery.rootGroup.id) {
+      const updatedQuery: Query = {
+        ...currentQuery,
+        rootGroup: {
+          ...currentQuery.rootGroup,
+          children: [...currentQuery.rootGroup.children, newGroup],
+        },
+        updatedAt: new Date(),
+      };
+      const preview = generateQueryPreview(
+        updatedQuery.rootGroup,
+        updatedQuery.schemaName,
+      );
+      set({ currentQuery: updatedQuery, queryPreview: preview });
+      return;
+    }
+
     const updatedChildren = updateNodeInTree(
       currentQuery.rootGroup.children,
       parentGroupId,
@@ -377,6 +426,16 @@ export const useQueryStore = create<QueryState>((set, get) => ({
 
     set({ isExecuting: true });
 
+    // Inside executeCurrentQuery, after the set() call:
+    const { queryHistory } = get();
+    const historyEntry: SavedQuery = {
+      id: generateId(),
+      name: `Query ${queryHistory.length + 1} - ${new Date().toLocaleTimeString()}`,
+      query: deepClone(currentQuery),
+      savedAt: new Date(),
+    };
+    set({ queryHistory: [...queryHistory, historyEntry] });
+
     // Simulate async execution for loading state
     setTimeout(() => {
       const filtered = executeQuery(
@@ -466,7 +525,9 @@ export const useQueryStore = create<QueryState>((set, get) => ({
   // --- ACTION: Toggle dark mode ---
   toggleDarkMode: () => {
     const { isDarkMode } = get();
-    set({ isDarkMode: !isDarkMode });
+    const newValue = !isDarkMode;
+    setStoredBoolean(STORAGE_KEYS.THEME, newValue);
+    set({ isDarkMode: newValue });
   },
 
   // --- ACTION: Clear results ---
@@ -476,6 +537,20 @@ export const useQueryStore = create<QueryState>((set, get) => ({
 
   // --- ACTION: Load the schema ---
   loadSchema: () => {
+    setStoredBoolean(STORAGE_KEYS.SCHEMA_LOADED, true);
     set({ schemaLoaded: true });
+  },
+
+  hydrateFromStorage: () => {
+    if (typeof window === "undefined") return;
+    const savedTheme = getStoredBoolean(STORAGE_KEYS.THEME, false);
+    const savedSchema = getStoredBoolean(STORAGE_KEYS.SCHEMA_LOADED, false);
+
+    // Use requestAnimationFrame to batch these updates after first paint
+    set({
+      isDarkMode: savedTheme,
+      schemaLoaded: savedSchema,
+      hydrated: true,
+    });
   },
 }));

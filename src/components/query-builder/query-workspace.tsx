@@ -264,7 +264,7 @@ function ConditionNode({ condition }: ConditionNodeProps) {
         onChange={(e) =>
           updateCondition(condition.id, { field: e.target.value })
         }
-        className="cursor-pointer bg-transparent text-[12px] font-medium text-primary outline-none font-sans min-w-0 max-w-[120px]"
+        className="cursor-pointer bg-transparent text-[12px] font-medium text-secondary-text outline-none font-sans min-w-0 max-w-[120px]"
         data-testid="condition-field"
       >
         <option value="" className="text-muted">

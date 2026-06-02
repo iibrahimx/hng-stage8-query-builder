@@ -21,6 +21,21 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
+      {/* <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+          try {
+            const dark = localStorage.getItem('query-builder-theme');
+            if (dark === 'true') {
+              document.documentElement.classList.add('dark');
+            }
+          } catch {}
+        `,
+          }}
+        />
+      </head> */}
+
       <body className="min-h-screen antialiased">{children}</body>
     </html>
   );
