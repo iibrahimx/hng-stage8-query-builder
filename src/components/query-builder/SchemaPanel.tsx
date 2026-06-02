@@ -51,6 +51,9 @@ export function SchemaPanel() {
           <h2 className="text-xs font-semibold uppercase tracking-wider text-secondary-text">
             Schema Explorer
           </h2>
+          <div className="flex items-center gap-1">
+            <SchemaDropdown />
+          </div>
         </div>
         <div className="flex flex-1 items-center justify-center p-6">
           <div className="flex w-full max-w-[220px] flex-col items-center gap-4 rounded-2xl border border-border-secondary bg-elevated px-5 py-8 text-center">
@@ -87,13 +90,7 @@ export function SchemaPanel() {
           Schema Explorer
         </h2>
         <div className="flex items-center gap-1">
-          <div className="flex items-center gap-1">
-            <SchemaTab name="users" />
-            <SchemaTab name="products" />
-            <SchemaTab name="orders" />
-            <SchemaTab name="workers" />
-            <SchemaTab name="cities" />
-          </div>
+          <SchemaDropdown />
         </div>
         <span className="ml-auto text-[11px] text-muted font-mono">
           {filteredFields.length}/{schema.length}
@@ -204,27 +201,36 @@ function SchemaField({
 }
 
 // ============================================================
-// SCHEMA TAB COMPONENT
+// SCHEMA DROPDOWN COMPONENT
 // ============================================================
 
-function SchemaTab({
-  name,
-}: {
-  name: "users" | "products" | "orders" | "workers" | "cities";
-}) {
+function SchemaDropdown() {
   const activeSchema = useQueryStore((state) => state.activeSchema);
   const switchSchema = useQueryStore((state) => state.switchSchema);
 
+  const schemas = [
+    { value: "users", label: "Users" },
+    { value: "products", label: "Products" },
+    { value: "orders", label: "Orders" },
+    { value: "workers", label: "Workers" },
+    { value: "cities", label: "Cities" },
+  ] as const;
+
   return (
-    <button
-      onClick={() => switchSchema(name)}
-      className={`cursor-pointer rounded-md px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider font-condensed transition-all duration-150 ${
-        activeSchema === name
-          ? "bg-accent-surface text-accent border border-accent-border"
-          : "text-muted hover:text-secondary-text hover:bg-hover"
-      }`}
+    <select
+      value={activeSchema}
+      onChange={(e) => switchSchema(e.target.value as typeof activeSchema)}
+      className="cursor-pointer rounded-md bg-secondary px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wider text-accent outline-none border border-accent-border font-condensed hover:bg-hover transition-all duration-150"
     >
-      {name}
-    </button>
+      {schemas.map((s) => (
+        <option
+          key={s.value}
+          value={s.value}
+          className="text-primary bg-panel font-sans normal-case text-[12px]"
+        >
+          {s.label}
+        </option>
+      ))}
+    </select>
   );
 }
