@@ -3,9 +3,10 @@
 import { useEffect } from "react";
 import { useQueryStore } from "@/store/query-store";
 import { Header } from "@/components/ui/header";
-import { Play } from "lucide-react";
+// import { Play } from "lucide-react";
 import { SchemaPanel } from "@/components/query-builder/schema-panel";
 import { QueryWorkspace } from "@/components/query-builder/query-workspace";
+import { ResultsPanel } from "@/components/query-builder/results-panel";
 
 export default function Home() {
   const { currentQuery, initializeQuery, isDarkMode, toggleDarkMode } =
@@ -57,7 +58,7 @@ export default function Home() {
         </div>
 
         {/* Right Panel - Results */}
-        <Panel
+        {/* <Panel
           title="Results"
           icon={<Play size={14} />}
           width="w-full lg:w-96"
@@ -75,7 +76,10 @@ export default function Home() {
               },
             }}
           />
-        </Panel>
+        </Panel> */}
+        <div className="w-full lg:w-96 flex-shrink-0 flex flex-col overflow-hidden bg-panel border-l border-border-secondary">
+          <ResultsPanel />
+        </div>
       </main>
     </div>
   );
@@ -85,78 +89,78 @@ export default function Home() {
 // PANEL COMPONENT
 // ============================================================
 
-function Panel({
-  title,
-  icon,
-  width,
-  borderSide,
-  children,
-}: {
-  title: string | null;
-  icon?: React.ReactNode;
-  width: string;
-  borderSide: "border-r" | "border-l" | null;
-  children: React.ReactNode;
-}) {
-  return (
-    <aside
-      className={`${width} flex flex-col overflow-hidden bg-panel ${borderSide || ""} ${borderSide ? "border-border-secondary" : ""}`}
-    >
-      {title && (
-        <div className="flex items-center gap-2 border-b border-border-secondary px-4 py-2.5 flex-shrink-0">
-          <span className="text-muted">{icon}</span>
-          <h2 className="text-xs font-semibold uppercase tracking-wider text-secondary-text">
-            {title}
-          </h2>
-        </div>
-      )}
-      <div className="flex-1 overflow-y-auto">{children}</div>
-    </aside>
-  );
-}
+// function Panel({
+//   title,
+//   icon,
+//   width,
+//   borderSide,
+//   children,
+// }: {
+//   title: string | null;
+//   icon?: React.ReactNode;
+//   width: string;
+//   borderSide: "border-r" | "border-l" | null;
+//   children: React.ReactNode;
+// }) {
+//   return (
+//     <aside
+//       className={`${width} flex flex-col overflow-hidden bg-panel ${borderSide || ""} ${borderSide ? "border-border-secondary" : ""}`}
+//     >
+//       {title && (
+//         <div className="flex items-center gap-2 border-b border-border-secondary px-4 py-2.5 flex-shrink-0">
+//           <span className="text-muted">{icon}</span>
+//           <h2 className="text-xs font-semibold uppercase tracking-wider text-secondary-text">
+//             {title}
+//           </h2>
+//         </div>
+//       )}
+//       <div className="flex-1 overflow-y-auto">{children}</div>
+//     </aside>
+//   );
+// }
 
 // ============================================================
 // EMPTY STATE
 // ============================================================
 
-function EmptyState({
-  icon,
-  title,
-  description,
-  action,
-}: {
-  icon: React.ReactNode;
-  title: string;
-  description: string;
-  action?: {
-    label: string;
-    onClick: () => void;
-  };
-}) {
-  return (
-    <div className="flex h-full items-center justify-center p-6">
-      <div className="flex w-full max-w-[240px] flex-col items-center gap-4 rounded-2xl border border-border-secondary bg-elevated px-6 py-8 text-center">
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-secondary text-muted">
-          {icon}
-        </div>
-        <div>
-          <p className="text-[13px] font-medium text-primary">{title}</p>
-          <p className="mt-1 text-[12px] leading-relaxed text-muted">
-            {description}
-          </p>
-        </div>
-        {action && (
-          <button
-            onClick={action.onClick}
-            className="cursor-pointer rounded-lg bg-accent px-4 py-2 text-[12px] font-semibold text-accent-foreground transition-all duration-150 hover:bg-accent-hover active:scale-[0.98]"
-          >
-            {action.label}
-          </button>
-        )}
-      </div>
-    </div>
-  );
-}
+// function EmptyState({
+//   icon,
+//   title,
+//   description,
+//   action,
+// }: {
+//   icon: React.ReactNode;
+//   title: string;
+//   description: string;
+//   action?: {
+//     label: string;
+//     onClick: () => void;
+//   };
+// }) {
+//   return (
+//     <div className="flex h-full items-center justify-center p-6">
+//       <div className="flex w-full max-w-[240px] flex-col items-center gap-4 rounded-2xl border border-border-secondary bg-elevated px-6 py-8 text-center">
+//         <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-secondary text-muted">
+//           {icon}
+//         </div>
+//         <div>
+//           <p className="text-[13px] font-medium text-primary">{title}</p>
+//           <p className="mt-1 text-[12px] leading-relaxed text-muted">
+//             {description}
+//           </p>
+//         </div>
+//         {action && (
+//           <button
+//             onClick={action.onClick}
+//             className="cursor-pointer rounded-lg bg-accent px-4 py-2 text-[12px] font-semibold text-accent-foreground transition-all duration-150 hover:bg-accent-hover active:scale-[0.98]"
+//           >
+//             {action.label}
+//           </button>
+//         )}
+//       </div>
+//     </div>
+//   );
+// }
 
 // ============================================================
 // CENTER EMPTY STATE
