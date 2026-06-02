@@ -121,7 +121,7 @@ export function Header({ isDarkMode, onToggleDarkMode }: HeaderProps) {
       {/* LEFT: Logo & Title */}
       <div className="flex items-center gap-2.5">
         <LogoMark />
-        <span className="text-[13px] font-semibold tracking-widest text-primary uppercase">
+        <span className="text-[13px] font-semibold tracking-tight text-primary">
           Query Builder
         </span>
       </div>

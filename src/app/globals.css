@@ -29,8 +29,8 @@
   /* Accent tokens (Green) */
   --color-accent: var(--color-primary-500);
   --color-accent-hover: var(--color-primary-600);
-  --color-accent-surface: var(--color-accent-surface);
-  --color-accent-border: var(--color-accent-border);
+  --color-accent-surface: var(--accent-surface-value);
+  --color-accent-border: var(--accent-border-value);
   --color-accent-foreground: var(--color-accent-foreground);
 
   /* Gold/Amber tokens */
@@ -52,22 +52,185 @@
    CSS CUSTOM PROPERTIES (Theme Tokens)
    ============================================================ */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* --- Font Families --- */
+  --font-sans: "Geist", system-ui, -apple-system, sans-serif;
+  --font-condensed: "IBM Plex Sans Condensed", system-ui, sans-serif;
+  --font-mono: "Geist Mono", "IBM Plex Mono", monospace;
+  --font-mono-tabular: "IBM Plex Mono", monospace;
+
+  /* ============================================================
+     LIGHT MODE - Warm Earth & Green Palette
+     ============================================================ */
+
+  /* --- Primary: Deep Forest Green --- */
+  --color-primary-50: #f0fdf4;
+  --color-primary-100: #dcfce7;
+  --color-primary-200: #bbf7d0;
+  --color-primary-300: #86efac;
+  --color-primary-400: #4ade80;
+  --color-primary-500: #22c55e;
+  --color-primary-600: #16a34a;
+  --color-primary-700: #15803d;
+  --color-primary-800: #166534;
+  --color-primary-900: #14532d;
+  --color-primary-950: #052e16;
+
+  /* --- Accent: Warm Amber/Gold --- */
+  --color-accent-50: #fffbeb;
+  --color-accent-100: #fef3c7;
+  --color-accent-200: #fde68a;
+  --color-accent-300: #fcd34d;
+  --color-accent-400: #fbbf24;
+  --color-accent-500: #f59e0b;
+  --color-accent-600: #d97706;
+  --color-accent-700: #b45309;
+  --color-accent-800: #92400e;
+  --color-accent-900: #78350f;
+
+  /* --- Danger: Rich Terracotta Red --- */
+  --color-danger-50: #fef2f2;
+  --color-danger-100: #fee2e2;
+  --color-danger-200: #fecaca;
+  --color-danger-300: #fca5a5;
+  --color-danger-400: #f87171;
+  --color-danger-500: #ef4444;
+  --color-danger-600: #dc2626;
+  --color-danger-700: #b91c1c;
+  --color-danger-800: #991b1b;
+  --color-danger-900: #7f1d1d;
+
+  /* --- Surface: Warm Silver/Brown Neutrals --- */
+  --color-surface-50: #fafaf9;
+  --color-surface-100: #f5f5f4;
+  --color-surface-200: #e7e5e4;
+  --color-surface-300: #d6d3d1;
+  --color-surface-400: #a8a29e;
+  --color-surface-500: #78716c;
+  --color-surface-600: #57534e;
+  --color-surface-700: #44403c;
+  --color-surface-800: #292524;
+  --color-surface-900: #1c1917;
+  --color-surface-950: #0c0a09;
+
+  /* --- Backgrounds (Refined Light Mode) --- */
+  --color-bg-page: #fafaf9;
+  --color-bg-card: #ffffff;
+  --color-bg-secondary: #f5f5f4;
+  --color-bg-elevated: #ffffff;
+  --color-bg-hover: #e7e5e4;
+
+  /* --- Text --- */
+  --color-text-primary: #1c1917;
+  --color-text-secondary: #57534e;
+  --color-text-muted: #a8a29e;
+
+  /* --- Borders --- */
+  --color-border-default: #d6d3d1;
+  --color-border-secondary: #e7e5e4;
+  --color-border-light: #f5f5f4;
+
+  /* --- Accent Surfaces --- */
+  --accent-surface-value: rgba(22, 163, 74, 0.08);
+  --accent-border-value: rgba(22, 163, 74, 0.22);
+  --color-accent-foreground: #ffffff;
+
+  /* --- Gold Surfaces --- */
+  --color-accent-surface-gold: rgba(245, 158, 11, 0.08);
+
+  /* --- Danger Surfaces --- */
+  --color-danger-surface: rgba(239, 68, 68, 0.08);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* ============================================================
+   DARK MODE - Warm Deep Earth Tones
+   ============================================================ */
+.dark {
+  /* --- Backgrounds (Layered warm darks) --- */
+  --color-bg-page: #111315;
+  --color-bg-card: #17191d;
+  --color-bg-secondary: #1d2127;
+  --color-bg-elevated: #222831;
+  --color-bg-hover: #2b3440;
+
+  /* --- Text --- */
+  --color-text-primary: #fafaf9;
+  --color-text-secondary: #a8a29e;
+  --color-text-muted: #78716c;
+
+  /* --- Borders --- */
+  --color-border-default: #323844;
+  --color-border-secondary: #272d38;
+  --color-border-light: #292524;
+
+  /* --- Primary Green (brighter for dark mode contrast) --- */
+  --color-primary-50: #052e16;
+  --color-primary-100: #14532d;
+  --color-primary-200: #166534;
+  --color-primary-300: #15803d;
+  --color-primary-400: #16a34a;
+  --color-primary-500: #22c55e;
+  --color-primary-600: #4ade80;
+  --color-primary-700: #86efac;
+  --color-primary-800: #bbf7d0;
+  --color-primary-900: #dcfce7;
+  --color-primary-950: #f0fdf4;
+
+  /* --- Accent Amber (brighter for dark mode) --- */
+  --color-accent-50: #78350f;
+  --color-accent-100: #92400e;
+  --color-accent-200: #b45309;
+  --color-accent-300: #d97706;
+  --color-accent-400: #f59e0b;
+  --color-accent-500: #fbbf24;
+  --color-accent-600: #fcd34d;
+  --color-accent-700: #fde68a;
+  --color-accent-800: #fef3c7;
+  --color-accent-900: #fffbeb;
+
+  /* --- Danger Red --- */
+  --color-danger-50: #7f1d1d;
+  --color-danger-100: #991b1b;
+  --color-danger-200: #b91c1c;
+  --color-danger-300: #dc2626;
+  --color-danger-400: #ef4444;
+  --color-danger-500: #f87171;
+  --color-danger-600: #fca5a5;
+  --color-danger-700: #fecaca;
+  --color-danger-800: #fee2e2;
+  --color-danger-900: #fef2f2;
+
+  /* --- Surface (Warm dark neutrals) --- */
+  --color-surface-50: #0c0a09;
+  --color-surface-100: #1c1917;
+  --color-surface-200: #24201e;
+  --color-surface-300: #292524;
+  --color-surface-400: #35312e;
+  --color-surface-500: #44403c;
+  --color-surface-600: #78716c;
+  --color-surface-700: #a8a29e;
+  --color-surface-800: #d6d3d1;
+  --color-surface-900: #f5f5f4;
+
+  /* --- Accent Surfaces (Dark Mode) --- */
+  --accent-surface-value: rgba(34, 197, 94, 0.1);
+  --accent-border-value: rgba(34, 197, 94, 0.25);
+  --color-accent-foreground: #0c0a09;
+
+  /* --- Gold Surfaces (Dark Mode) --- */
+  --color-accent-surface-gold: rgba(251, 191, 36, 0.08);
+
+  /* --- Danger Surfaces (Dark Mode) --- */
+  --color-danger-surface: rgba(239, 68, 68, 0.1);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* ============================================================
+   BASE STYLES
+   ============================================================ */
+html {
+  font-family: var(--font-sans);
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 body {
