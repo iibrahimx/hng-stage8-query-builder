@@ -15,6 +15,7 @@ import {
   STORAGE_KEYS,
   getStoredBoolean,
   setStoredBoolean,
+  setCookie,
 } from "@/lib/storage";
 
 // ============================================================
@@ -46,6 +47,12 @@ interface QueryState {
 
   historyMode: boolean;
   setHistoryMode: (mode: boolean) => void;
+
+  reorderChildren: (
+    groupId: string,
+    oldIndex: number,
+    newIndex: number,
+  ) => void;
 
   // --- Actions ---
   initializeQuery: () => void;
@@ -539,6 +546,39 @@ export const useQueryStore = create<QueryState>((set, get) => ({
   loadSchema: () => {
     setStoredBoolean(STORAGE_KEYS.SCHEMA_LOADED, true);
     set({ schemaLoaded: true });
+  },
+
+  reorderChildren: (groupId: string, oldIndex: number, newIndex: number) => {
+    const { currentQuery } = get();
+    if (!currentQuery) return;
+
+    const reorder = (nodes: QueryNode[]): QueryNode[] => {
+      return nodes.map((node) => {
+        if (node.id === groupId && node.type === "group") {
+          const newChildren = [...node.children];
+          const [moved] = newChildren.splice(oldIndex, 1);
+          newChildren.splice(newIndex, 0, moved);
+          return { ...node, children: newChildren };
+        }
+        if (node.type === "group") {
+          return { ...node, children: reorder(node.children) };
+        }
+        return node;
+      });
+    };
+
+    const updatedChildren = reorder(currentQuery.rootGroup.children);
+    const updatedQuery: Query = {
+      ...currentQuery,
+      rootGroup: { ...currentQuery.rootGroup, children: updatedChildren },
+      updatedAt: new Date(),
+    };
+    const preview = generateQueryPreview(
+      updatedQuery.rootGroup,
+      updatedQuery.schemaName,
+    );
+    set({ currentQuery: updatedQuery, queryPreview: preview });
+    setCookie("query-builder-current-query", JSON.stringify(updatedQuery));
   },
 
   hydrateFromStorage: () => {
