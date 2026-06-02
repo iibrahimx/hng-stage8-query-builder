@@ -12,6 +12,11 @@ import { generateId, deepClone } from "@/lib/utils";
 import { executeQuery, generateQueryPreview } from "@/lib/query-engine";
 import { usersSchema } from "@/data";
 import { UserRecord } from "@/data";
+import {
+  STORAGE_KEYS,
+  getStoredBoolean,
+  setStoredBoolean,
+} from "@/lib/storage";
 
 // ============================================================
 // STORE STATE SHAPE
@@ -163,14 +168,14 @@ export const useQueryStore = create<QueryState>((set, get) => ({
   schema: usersSchema.fields,
   dataset: [],
   results: null,
-  schemaLoaded: false,
+  schemaLoaded: getStoredBoolean(STORAGE_KEYS.SCHEMA_LOADED, false),
   queryPreview: "",
   validationErrors: [],
   isExecuting: false,
   resultCount: 0,
   queryHistory: [],
   savedPresets: [],
-  isDarkMode: false,
+  isDarkMode: getStoredBoolean(STORAGE_KEYS.THEME, false),
 
   // --- ACTION: Initialize a fresh query ---
   initializeQuery: () => {
@@ -462,7 +467,9 @@ export const useQueryStore = create<QueryState>((set, get) => ({
   // --- ACTION: Toggle dark mode ---
   toggleDarkMode: () => {
     const { isDarkMode } = get();
-    set({ isDarkMode: !isDarkMode });
+    const newValue = !isDarkMode;
+    setStoredBoolean(STORAGE_KEYS.THEME, newValue);
+    set({ isDarkMode: newValue });
   },
 
   // --- ACTION: Clear results ---
@@ -472,6 +479,7 @@ export const useQueryStore = create<QueryState>((set, get) => ({
 
   // --- ACTION: Load the schema ---
   loadSchema: () => {
+    setStoredBoolean(STORAGE_KEYS.SCHEMA_LOADED, true);
     set({ schemaLoaded: true });
   },
 }));
